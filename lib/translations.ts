@@ -59,6 +59,10 @@ export const translations = {
     searchPlaceholder: "Rechercher un produit...",
     adminPortal: "Admin",
     switchLanguage: "العربية",
+    promotion: "Promotion",
+    previousPrice: "Prix avant",
+    currentPrice: "Prix actuel",
+    savePercent: "Économisez",
   },
   ar: {
     brandName: "AresStore",
@@ -120,5 +124,9 @@ export const translations = {
     searchPlaceholder: "ابحث عن أي منتج تريده...",
     adminPortal: "الإدارة",
     switchLanguage: "Français",
+    promotion: "تخفيض",
+    previousPrice: "السعر السابق",
+    currentPrice: "السعر الحالي",
+    savePercent: "وفر",
   },
 };

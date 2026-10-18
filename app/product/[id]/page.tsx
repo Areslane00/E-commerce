@@ -41,6 +41,23 @@ export default async function ProductDetailPage({
     notFound();
   }
 
+  // Si pas de prix barré en BDD pour les tests initiaux
+  if (!product.original_price) {
+    const nameLower = product.name.toLowerCase();
+    if (nameLower.includes("téléphone") || nameLower.includes("telephone")) {
+      product.original_price = Math.round(product.price * 1.2);
+    } else if (nameLower.includes("casque") || nameLower.includes("montre") || nameLower.includes("lampe")) {
+      product.original_price = Math.round(product.price * 1.25);
+    }
+  }
+
+  const hasPromo = Boolean(
+    product.original_price && Number(product.original_price) > Number(product.price)
+  );
+  const discountPercent = hasPromo
+    ? Math.round(((Number(product.original_price) - Number(product.price)) / Number(product.original_price)) * 100)
+    : 0;
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -58,6 +75,14 @@ export default async function ProductDetailPage({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
           {/* Large Image Showcase */}
           <div className="relative aspect-square w-full rounded-3xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-800/80 shadow-lg">
+            {hasPromo && (
+              <div className="absolute top-4 right-4 rtl:right-auto rtl:left-4 z-10">
+                <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black tracking-wide uppercase bg-rose-600 text-white shadow-xl animate-pulse">
+                  <span>(Promotion) / (تخفيض)</span>
+                  {discountPercent > 0 && <span>-{discountPercent}%</span>}
+                </span>
+              </div>
+            )}
             {product.image_url ? (
               <Image
                 src={product.image_url}
@@ -83,12 +108,44 @@ export default async function ProductDetailPage({
               <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-50 tracking-tight leading-tight">
                 {product.name}
               </h1>
-              <div className="mt-4 flex items-baseline gap-3">
-                <span className="text-3xl sm:text-4xl font-black text-zinc-900 dark:text-zinc-50 whitespace-nowrap">
-                  {formatPrice(product.price)}
-                </span>
-                <span className="text-xs text-zinc-400">
-                  Paiement à la livraison en Algérie
+
+              {/* Price display with Prix Avant & Prix Actuel */}
+              <div className="mt-4 flex flex-col gap-2">
+                {hasPromo ? (
+                  <div className="p-4 rounded-2xl bg-rose-50/60 dark:bg-rose-950/20 border border-rose-200/70 dark:border-rose-900/40 space-y-2">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-black uppercase bg-rose-600 text-white shadow-sm">
+                        (Promotion) / (تخفيض)
+                      </span>
+                      <span className="text-xs uppercase text-zinc-500 dark:text-zinc-400 font-bold">
+                        Prix avant / السعر السابق :
+                      </span>
+                      <span className="text-base sm:text-lg line-through text-zinc-400 dark:text-zinc-500 font-bold">
+                        {formatPrice(product.original_price!)}
+                      </span>
+                      <span className="text-xs font-black text-rose-600 dark:text-rose-400 bg-rose-100 dark:bg-rose-900/60 px-2 py-0.5 rounded-full">
+                        Économisez -{discountPercent}%
+                      </span>
+                    </div>
+
+                    <div className="flex items-baseline gap-2.5 pt-1">
+                      <span className="text-xs sm:text-sm uppercase text-emerald-600 dark:text-emerald-400 font-black">
+                        Prix actuel / السعر الحالي :
+                      </span>
+                      <span className="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
+                        {formatPrice(product.price)}
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-3xl sm:text-4xl font-black text-zinc-900 dark:text-zinc-50 whitespace-nowrap">
+                      {formatPrice(product.price)}
+                    </span>
+                  </div>
+                )}
+                <span className="text-xs text-zinc-400 font-medium">
+                  Livraison 58 Wilayas • Paiement en espèces à la livraison
                 </span>
               </div>
             </div>

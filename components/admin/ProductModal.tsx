@@ -33,6 +33,7 @@ export function ProductModal({
     name: "",
     description: "",
     price: 0,
+    original_price: null,
     category: "Audio",
     stock: 10,
     image_url: "",
@@ -48,6 +49,7 @@ export function ProductModal({
         name: product.name,
         description: product.description || "",
         price: Number(product.price),
+        original_price: product.original_price ? Number(product.original_price) : null,
         category: product.category,
         stock: product.stock,
         image_url: product.image_url || "",
@@ -57,6 +59,7 @@ export function ProductModal({
         name: "",
         description: "",
         price: 0,
+        original_price: null,
         category: "Audio",
         stock: 10,
         image_url: "",
@@ -112,44 +115,73 @@ export function ProductModal({
 
     setIsSubmitting(true);
     try {
+      const payload: any = {
+        name: validated.data.name,
+        description: validated.data.description || null,
+        price: validated.data.price,
+        category: validated.data.category,
+        stock: validated.data.stock,
+        image_url: validated.data.image_url || null,
+      };
+
+      if (validated.data.original_price && Number(validated.data.original_price) > 0) {
+        payload.original_price = Number(validated.data.original_price);
+      } else {
+        payload.original_price = null;
+      }
+
+      let savedProduct: Product | null = null;
+
       if (isEditing && product) {
-        const { data, error } = await supabase
+        const res = await supabase
           .from("products")
-          .update({
-            name: validated.data.name,
-            description: validated.data.description || null,
-            price: validated.data.price,
-            category: validated.data.category,
-            stock: validated.data.stock,
-            image_url: validated.data.image_url || null,
-            updated_at: new Date().toISOString(),
-          })
+          .update({ ...payload, updated_at: new Date().toISOString() })
           .eq("id", product.id)
           .select()
           .single();
 
-        if (error) throw new Error(error.message);
+        if (res.error && res.error.message.includes("original_price")) {
+          delete payload.original_price;
+          const retry = await supabase
+            .from("products")
+            .update({ ...payload, updated_at: new Date().toISOString() })
+            .eq("id", product.id)
+            .select()
+            .single();
+          if (retry.error) throw new Error(retry.error.message);
+          savedProduct = retry.data as Product;
+        } else if (res.error) {
+          throw new Error(res.error.message);
+        } else {
+          savedProduct = res.data as Product;
+        }
 
         success(`Le produit "${validated.data.name}" a été modifié.`, "Produit mis à jour");
-        onSuccess(data as Product, false);
+        onSuccess(savedProduct, false);
       } else {
-        const { data, error } = await supabase
+        const res = await supabase
           .from("products")
-          .insert({
-            name: validated.data.name,
-            description: validated.data.description || null,
-            price: validated.data.price,
-            category: validated.data.category,
-            stock: validated.data.stock,
-            image_url: validated.data.image_url || null,
-          })
+          .insert(payload)
           .select()
           .single();
 
-        if (error) throw new Error(error.message);
+        if (res.error && res.error.message.includes("original_price")) {
+          delete payload.original_price;
+          const retry = await supabase
+            .from("products")
+            .insert(payload)
+            .select()
+            .single();
+          if (retry.error) throw new Error(retry.error.message);
+          savedProduct = retry.data as Product;
+        } else if (res.error) {
+          throw new Error(res.error.message);
+        } else {
+          savedProduct = res.data as Product;
+        }
 
         success(`Nouveau produit "${validated.data.name}" créé avec succès !`, "Produit créé");
-        onSuccess(data as Product, true);
+        onSuccess(savedProduct, true);
       }
 
       onClose();
@@ -178,16 +210,32 @@ export function ProductModal({
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <Input
             id="price"
             type="number"
             step="0.01"
-            label="Prix (DZD) *"
+            label="Prix actuel (DZD) *"
             placeholder=""
             value={formData.price !== undefined ? formData.price : ""}
             error={errors.price}
             onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+          />
+
+          <Input
+            id="original_price"
+            type="number"
+            step="0.01"
+            label="Prix avant promo (DZD)"
+            placeholder=""
+            value={formData.original_price !== undefined && formData.original_price !== null ? formData.original_price : ""}
+            error={errors.original_price}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                original_price: e.target.value === "" ? null : parseFloat(e.target.value) || null,
+              })
+            }
           />
 
           <div className="space-y-1.5">

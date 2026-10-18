@@ -48,19 +48,26 @@ export function ProductsManager({ initialProducts }: ProductsManagerProps) {
     return ["all", ...Array.from(set)];
   }, [products]);
 
-  // Filtered products
-  const filteredProducts = products.filter((p) => {
-    const matchesCat =
-      categoryFilter === "all" || p.category.toLowerCase() === categoryFilter.toLowerCase();
-    const q = searchTerm.trim().toLowerCase();
-    const matchesSearch =
-      !q ||
-      p.name.toLowerCase().includes(q) ||
-      (p.description && p.description.toLowerCase().includes(q)) ||
-      p.category.toLowerCase().includes(q);
+  // Filtered products (avec produits en stock disponibles affichés en premier)
+  const filteredProducts = products
+    .filter((p) => {
+      const matchesCat =
+        categoryFilter === "all" || p.category.toLowerCase() === categoryFilter.toLowerCase();
+      const q = searchTerm.trim().toLowerCase();
+      const matchesSearch =
+        !q ||
+        p.name.toLowerCase().includes(q) ||
+        (p.description && p.description.toLowerCase().includes(q)) ||
+        p.category.toLowerCase().includes(q);
 
-    return matchesCat && matchesSearch;
-  });
+      return matchesCat && matchesSearch;
+    })
+    .sort((a, b) => {
+      const aInStock = a.stock > 0 ? 1 : 0;
+      const bInStock = b.stock > 0 ? 1 : 0;
+      if (aInStock !== bInStock) return bInStock - aInStock;
+      return 0;
+    });
 
   // Handle Add/Edit modal success
   const handleProductSuccess = (updatedProduct: Product, isNew: boolean) => {
@@ -230,8 +237,22 @@ export function ProductsManager({ initialProducts }: ProductsManagerProps) {
                         </span>
                       </td>
 
-                      <td className="py-3.5 px-4 font-bold text-zinc-900 dark:text-zinc-50 text-sm whitespace-nowrap">
-                        {formatPrice(product.price)}
+                      <td className="py-3.5 px-4 text-sm whitespace-nowrap">
+                        <div className="flex flex-col">
+                          {product.original_price && product.original_price > product.price && (
+                            <div className="flex items-center gap-1">
+                              <span className="text-[10px] font-bold text-rose-500 uppercase">
+                                Promo
+                              </span>
+                              <span className="text-[11px] line-through text-zinc-400 font-semibold">
+                                {formatPrice(product.original_price)}
+                              </span>
+                            </div>
+                          )}
+                          <span className="font-bold text-zinc-900 dark:text-zinc-50">
+                            {formatPrice(product.price)}
+                          </span>
+                        </div>
                       </td>
 
                       {/* Stock & Quick Adjustment Buttons */}

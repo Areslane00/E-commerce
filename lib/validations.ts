@@ -45,6 +45,13 @@ export const productSchema = z.object({
     .coerce
     .number({ invalid_type_error: "Le prix doit être un nombre valide" })
     .positive("Le prix doit être supérieur à 0"),
+  original_price: z
+    .coerce
+    .number({ invalid_type_error: "Le prix avant promo doit être un nombre valide" })
+    .positive("Le prix avant promo doit être supérieur à 0")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
   category: z
     .string()
     .min(2, "La catégorie est obligatoire"),

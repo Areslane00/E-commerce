@@ -5,6 +5,7 @@ export interface Product {
   name: string;
   description: string | null;
   price: number;
+  original_price?: number | null; // Prix avant promotion (barré)
   category: string;
   image_url: string | null;
   stock: number;

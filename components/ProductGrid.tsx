@@ -60,6 +60,20 @@ export function ProductGrid({
         return matchesCategory && matchesSearch;
       })
       .sort((a, b) => {
+        // RÈGLE : Les produits dont le stock est disponible s'affichent TOUJOURS en premier
+        const aInStock = (a.stock > 0) ? 1 : 0;
+        const bInStock = (b.stock > 0) ? 1 : 0;
+        if (aInStock !== bInStock) {
+          return bInStock - aInStock; // Les produits disponibles (1) avant les épuisés (0)
+        }
+
+        // Si l'utilisateur choisit les promotions en premier
+        if (sortBy === "promo") {
+          const aPromo = (a.original_price && a.original_price > a.price) ? 1 : 0;
+          const bPromo = (b.original_price && b.original_price > b.price) ? 1 : 0;
+          if (aPromo !== bPromo) return bPromo - aPromo;
+        }
+
         if (sortBy === "price-asc") return a.price - b.price;
         if (sortBy === "price-desc") return b.price - a.price;
         if (sortBy === "stock-desc") return b.stock - a.stock;
@@ -92,10 +106,11 @@ export function ProductGrid({
               onChange={(e) => setSortBy(e.target.value)}
               className="bg-transparent border-0 focus:outline-none text-xs font-medium cursor-pointer"
             >
-              <option value="default">{isAr ? "الترتيب الافتراضي" : "Tri par défaut"}</option>
+              <option value="default">{isAr ? "الترتيب الافتراضي (المتوفر أولاً)" : "Tri par défaut (En stock d'abord)"}</option>
+              <option value="promo">{isAr ? "العروض والتخفيضات أولاً" : "Promotions d'abord"}</option>
               <option value="price-asc">{isAr ? "السعر: من الأقل إلى الأعلى" : "Prix croissant"}</option>
               <option value="price-desc">{isAr ? "السعر: من الأعلى إلى الأقل" : "Prix décroissant"}</option>
-              <option value="stock-desc">{isAr ? "الأكثر توفراً في المخزون" : "Stock disponible"}</option>
+              <option value="stock-desc">{isAr ? "الأكثر توفراً في المخزون" : "Quantité en stock"}</option>
             </select>
           </div>
 

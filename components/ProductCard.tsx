@@ -28,6 +28,13 @@ export function ProductCard({ product }: ProductCardProps) {
   const { success, error } = useToast();
   const isOutOfStock = product.stock <= 0;
 
+  const hasPromo = Boolean(
+    product.original_price && Number(product.original_price) > Number(product.price)
+  );
+  const discountPercent = hasPromo
+    ? Math.round(((Number(product.original_price) - Number(product.price)) / Number(product.original_price)) * 100)
+    : 0;
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -86,14 +93,20 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        {/* Low Stock Warning Badge (if stock > 0 and stock < 5) */}
-        {!isOutOfStock && product.stock < 5 && (
-          <div className="absolute top-3 right-3 rtl:right-auto rtl:left-3 z-10">
+        {/* Promotion Badge & Low Stock Warning Badge */}
+        <div className="absolute top-3 right-3 rtl:right-auto rtl:left-3 z-10 flex flex-col items-end rtl:items-start gap-1">
+          {hasPromo && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black tracking-wide uppercase bg-rose-600 text-white shadow-md animate-pulse">
+              <span>{isAr ? "(تخفيض)" : "(Promotion)"}</span>
+              {discountPercent > 0 && <span>-{discountPercent}%</span>}
+            </span>
+          )}
+          {!isOutOfStock && product.stock < 5 && (
             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase bg-amber-500/90 text-white shadow-sm backdrop-blur-sm">
               {isAr ? `متبقي ${product.stock}` : `Plus que ${product.stock}`}
             </span>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Category Pill */}
         <div className="absolute bottom-3 left-3 rtl:left-auto rtl:right-3 z-10">
@@ -119,12 +132,37 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Price & Add to Cart button */}
         <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-2">
           <div className="flex flex-col">
-            <span className="text-[10px] uppercase font-bold text-zinc-400 dark:text-zinc-500">
-              {isAr ? "السعر" : "Prix"}
-            </span>
-            <span className="text-base sm:text-lg font-extrabold text-zinc-900 dark:text-zinc-50 whitespace-nowrap">
-              {formatPrice(product.price)}
-            </span>
+            {hasPromo ? (
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[10px] uppercase font-bold text-rose-500">
+                    {isAr ? "السعر السابق:" : "Prix avant :"}
+                  </span>
+                  <span className="text-xs line-through text-zinc-400 dark:text-zinc-500 font-semibold">
+                    {formatPrice(product.original_price!)}
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400">
+                    {isAr ? "السعر الحالي:" : "Prix actuel :"}
+                  </span>
+                  <span className="text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
+                    {formatPrice(product.price)}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <span className="text-[10px] uppercase font-bold text-zinc-400 dark:text-zinc-500">
+                  {isAr ? "السعر" : "Prix"}
+                </span>
+                <div>
+                  <span className="text-base sm:text-lg font-extrabold text-zinc-900 dark:text-zinc-50 whitespace-nowrap">
+                    {formatPrice(product.price)}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           <button
