@@ -60,7 +60,7 @@ export default function AdminLayout({
   }, [success, info]);
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-zinc-50 dark:bg-zinc-950 text-foreground">
+    <div className="min-h-screen flex flex-col md:flex-row bg-amber-50/30 dark:bg-zinc-950 text-foreground">
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between p-4 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800">
         <div className="flex items-center gap-2">

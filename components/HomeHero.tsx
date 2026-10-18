@@ -16,8 +16,8 @@ export function HomeHero() {
   const t = translations[mounted ? lang : "fr"];
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-zinc-100/90 via-white to-transparent dark:from-zinc-900/40 dark:via-zinc-950 dark:to-transparent py-14 sm:py-20 border-b border-zinc-200/60 dark:border-zinc-800/60">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(16,185,129,0.15),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(16,185,129,0.2),rgba(0,0,0,0))] pointer-events-none" />
+    <section className="relative overflow-hidden bg-gradient-to-b from-amber-50/80 via-orange-50/30 to-transparent dark:from-emerald-950/20 dark:via-zinc-950 dark:to-transparent py-14 sm:py-20 border-b border-amber-200/40 dark:border-zinc-800/60">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(16,185,129,0.12),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(16,185,129,0.15),rgba(0,0,0,0))] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
         {/* Algeria 58 Wilayas delivery pill */}

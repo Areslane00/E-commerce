@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       p_phone: validatedData.data.phone,
       p_email: validatedData.data.email || null,
       p_address: validatedData.data.address,
-      p_city: validatedData.data.city,
+      p_city: `${validatedData.data.wilaya} - ${validatedData.data.commune}`,
       p_notes: validatedData.data.notes || null,
       p_items: payloadItems,
     });

@@ -17,9 +17,9 @@ export function Footer() {
   const isAr = mounted && lang === "ar";
 
   return (
-    <footer className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 transition-colors">
+    <footer className="border-t border-amber-200/50 dark:border-zinc-800 bg-amber-50/40 dark:bg-zinc-950 transition-colors">
       {/* Guarantees banner in Algeria */}
-      <div className="border-b border-zinc-100 dark:border-zinc-850 py-8 bg-zinc-50/50 dark:bg-zinc-900/30">
+      <div className="border-b border-amber-100/60 dark:border-zinc-850 py-8 bg-amber-50/50 dark:bg-zinc-900/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200 flex-shrink-0">
@@ -89,11 +89,8 @@ export function Footer() {
           <Link href="/" className="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">
             {isAr ? "الرئيسية" : "Catalogue"}
           </Link>
-          <Link href="/admin" className="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">
-            {isAr ? "لوحة التحكم" : "Espace Administrateur"}
-          </Link>
-          <Link href="/login" className="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">
-            {isAr ? "تسجيل الدخول" : "Connexion"}
+          <Link href="/cart" className="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">
+            {isAr ? "سلة المشتريات" : "Mon Panier"}
           </Link>
         </div>
       </div>

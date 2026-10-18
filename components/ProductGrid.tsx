@@ -84,7 +84,7 @@ export function ProductGrid({
   return (
     <div className="space-y-8">
       {/* Search & Category Filter Controls */}
-      <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between bg-zinc-50/80 dark:bg-zinc-900/50 p-4 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 backdrop-blur-sm">
+      <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between bg-amber-50/60 dark:bg-zinc-900/50 p-4 rounded-2xl border border-amber-200/50 dark:border-zinc-800/80 backdrop-blur-sm">
         {/* Search input with empty placeholder as requested */}
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 rtl:left-auto rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -139,7 +139,7 @@ export function ProductGrid({
             className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 ${
               selectedCategory.toLowerCase() === category.toLowerCase()
                 ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-md"
-                : "bg-zinc-100/80 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-850 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                : "bg-amber-100/60 text-zinc-600 hover:bg-amber-200/80 dark:bg-zinc-850 dark:text-zinc-400 dark:hover:bg-zinc-800"
             }`}
           >
             {category === "all" ? t.allCategories : category}
@@ -163,7 +163,7 @@ export function ProductGrid({
           ))}
         </div>
       ) : filteredProducts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 px-4 text-center rounded-3xl border border-dashed border-zinc-300 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30">
+        <div className="flex flex-col items-center justify-center py-20 px-4 text-center rounded-3xl border border-dashed border-zinc-300 dark:border-zinc-800 bg-amber-50/40 dark:bg-zinc-900/30">
           <div className="w-16 h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 mb-4">
             <PackageOpen className="w-8 h-8 stroke-[1.5]" />
           </div>

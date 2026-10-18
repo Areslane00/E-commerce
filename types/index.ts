@@ -31,6 +31,8 @@ export interface Order {
   email: string | null;
   address: string;
   city: string;
+  wilaya?: string | null;
+  commune?: string | null;
   notes: string | null;
   total: number;
   status: OrderStatus;
@@ -80,6 +82,8 @@ export interface CheckoutFormData {
   phone: string;
   email?: string;
   address: string;
-  city: string;
+  wilaya: string;
+  commune: string;
+  city?: string;
   notes?: string;
 }

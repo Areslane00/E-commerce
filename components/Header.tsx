@@ -3,7 +3,7 @@
 import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ShoppingBag, Search, ShieldCheck, Sparkles } from "lucide-react";
+import { ShoppingBag, Search, Sparkles } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { useLanguageStore } from "@/store/useLanguageStore";
 import { translations } from "@/lib/translations";
@@ -56,7 +56,7 @@ export function Header() {
   const totalItems = mounted ? getTotalItems() : 0;
 
   return (
-    <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/80 dark:bg-zinc-950/80 border-b border-zinc-200/80 dark:border-zinc-800/80 transition-colors">
+    <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-amber-50/75 dark:bg-zinc-950/80 border-b border-amber-200/50 dark:border-zinc-800/80 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-4">
         {/* Brand / Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
@@ -82,15 +82,6 @@ export function Header() {
         <div className="flex items-center gap-2">
           {/* Language Toggle (FR / AR) */}
           <LanguageToggle />
-
-          {/* Admin link */}
-          <Link
-            href="/admin"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-          >
-            <ShieldCheck className="w-4 h-4 text-emerald-500" />
-            <span>{mounted ? t.adminPortal : "Admin"}</span>
-          </Link>
 
           <ThemeToggle />
 

@@ -36,8 +36,11 @@ export const translations = {
     fullNameLabel: "Nom complet *",
     phoneLabel: "Numéro de Téléphone *",
     emailLabel: "Email (optionnel pour confirmation)",
-    addressLabel: "Adresse de livraison *",
-    cityLabel: "Wilaya / Ville *",
+    addressLabel: "Adresse de livraison (Rue, Quartier) *",
+    cityLabel: "Wilaya / Commune *",
+    wilayaLabel: "Wilaya *",
+    communeLabel: "Commune *",
+    selectWilaya: "Sélectionnez votre Wilaya",
     notesLabel: "Instructions pour le livreur (optionnel)",
     codTitle: "Mode de paiement : En espèces à la livraison",
     codDesc:
@@ -103,6 +106,9 @@ export const translations = {
     emailLabel: "البريد الإلكتروني (اختياري)",
     addressLabel: "عنوان التوصيل (الحي، الشارع) *",
     cityLabel: "الولاية / البلدية *",
+    wilayaLabel: "الولاية *",
+    communeLabel: "البلدية *",
+    selectWilaya: "اختر الولاية",
     notesLabel: "ملاحظات إضافية للتوصيل (اختياري)",
     codTitle: "طريقة الدفع: نقداً عند الاستلام (Main à main)",
     codDesc:

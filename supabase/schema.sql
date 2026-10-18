@@ -79,6 +79,10 @@ CREATE TABLE IF NOT EXISTS public.orders (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
 );
 
+-- Si la table orders existe déjà, vous pouvez ajouter les colonnes wilaya et commune :
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS wilaya TEXT;
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS commune TEXT;
+
 -- 5. TABLE ORDER_ITEMS
 CREATE TABLE IF NOT EXISTS public.order_items (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

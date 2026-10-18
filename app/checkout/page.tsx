@@ -16,6 +16,7 @@ import { translations } from "@/lib/translations";
 import { useToast } from "@/components/ui/Toast";
 import { checkoutSchema, CheckoutFormValues } from "@/lib/validations";
 import { formatPrice } from "@/lib/utils";
+import { ALGERIA_WILAYAS } from "@/lib/algeriaWilayas";
 import {
   ShieldCheck,
   Truck,
@@ -49,7 +50,8 @@ export default function CheckoutPage() {
       phone: "",
       email: "",
       address: "",
-      city: "",
+      wilaya: "",
+      commune: "",
       notes: "",
     },
   });
@@ -199,23 +201,52 @@ export default function CheckoutPage() {
                 {...register("email")}
               />
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="sm:col-span-2">
-                  <Input
-                    id="address"
-                    label={t.addressLabel}
-                    placeholder=""
-                    error={errors.address?.message}
-                    {...register("address")}
-                  />
+              <Input
+                id="address"
+                label={t.addressLabel}
+                placeholder=""
+                error={errors.address?.message}
+                {...register("address")}
+              />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="w-full space-y-1.5">
+                  <label
+                    htmlFor="wilaya"
+                    className="block text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400"
+                  >
+                    {t.wilayaLabel}
+                  </label>
+                  <select
+                    id="wilaya"
+                    className={`flex h-11 w-full rounded-xl border bg-white/70 dark:bg-zinc-900/70 px-4 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 dark:focus-visible:ring-zinc-100 transition-all cursor-pointer ${
+                      errors.wilaya
+                        ? "border-rose-500 focus-visible:ring-rose-500"
+                        : "border-zinc-200 dark:border-zinc-800"
+                    }`}
+                    {...register("wilaya")}
+                  >
+                    <option value="">{t.selectWilaya}</option>
+                    {ALGERIA_WILAYAS.map((w) => (
+                      <option key={w.code} value={lang === "ar" ? w.nameAr : w.name}>
+                        {lang === "ar" ? w.nameAr : w.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.wilaya && (
+                    <p className="text-xs text-rose-500 font-medium mt-1">
+                      {errors.wilaya.message}
+                    </p>
+                  )}
                 </div>
+
                 <div>
                   <Input
-                    id="city"
-                    label={t.cityLabel}
+                    id="commune"
+                    label={t.communeLabel}
                     placeholder=""
-                    error={errors.city?.message}
-                    {...register("city")}
+                    error={errors.commune?.message}
+                    {...register("commune")}
                   />
                 </div>
               </div>

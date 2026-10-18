@@ -16,12 +16,19 @@ export const checkoutSchema = z.object({
     .or(z.literal("")),
   address: z
     .string()
-    .min(5, "L'adresse complète de livraison est requise")
+    .min(3, "L'adresse complète de livraison est requise")
     .max(200, "L'adresse ne doit pas dépasser 200 caractères"),
+  wilaya: z
+    .string()
+    .min(2, "Veuillez sélectionner ou renseigner votre Wilaya"),
+  commune: z
+    .string()
+    .min(2, "Veuillez renseigner votre Commune")
+    .max(80, "La commune ne doit pas dépasser 80 caractères"),
   city: z
     .string()
-    .min(2, "Veuillez renseigner votre ville")
-    .max(50, "La ville ne doit pas dépasser 50 caractères"),
+    .optional()
+    .or(z.literal("")),
   notes: z
     .string()
     .max(500, "Les instructions ne doivent pas dépasser 500 caractères")
