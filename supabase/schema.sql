@@ -517,70 +517,163 @@ CREATE POLICY "Suppression réservée aux admins"
 ALTER PUBLICATION supabase_realtime ADD TABLE public.orders;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.products;
 
--- 12. DONNÉES DE DÉMONSTRATION (SEED)
+-- 12. DONNÉES DE DÉMONSTRATION RÉELLES (SEED ARESSTORE DZD)
 INSERT INTO public.products (name, description, price, category, image_url, stock)
 VALUES
   (
-    'Casque Audio Sans Fil ANC Nova Pro',
-    'Casque circum-aural haut de gamme avec réduction active du bruit hybride, autonomie 40h et coussinets à mémoire de forme.',
-    189.99,
-    'Audio',
-    'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80',
-    18
-  ),
-  (
-    'Montre Connectée Horizon Fit 4',
-    'Écran AMOLED 1.43", suivi continu du rythme cardiaque et SpO2, GPS intégré, étanchéité 5 ATM et 14 jours d''autonomie.',
-    129.50,
-    'Accessoires',
-    'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
-    4
-  ),
-  (
-    'Clavier Mécanique Sans Fil Lumina RGB',
-    'Switches tactiles lubrifiés d''usine, rétroéclairage RGB personnalisable touche par touche, connectivité Bluetooth & 2.4GHz.',
-    94.00,
-    'Informatique',
-    'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800&q=80',
-    0
-  ),
-  (
-    'Enceinte Bluetooth Nomade Pulse Bass',
-    'Son stéréo à 360 degrés avec radiateurs passifs pour des basses profondes. Certification IPX7 résistante à l''eau, autonomie 20h.',
-    69.90,
-    'Audio',
-    'https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800&q=80',
-    12
-  ),
-  (
-    'Souris Ergonomique Haute Précision Aero',
-    'Capteur optique 26000 DPI, forme profilée prévenant les TMS, molette débrayable en aluminium et 7 boutons programmables.',
-    79.99,
-    'Informatique',
-    'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=800&q=80',
-    3
-  ),
-  (
-    'Lampe de Bureau LED Minimaliste Halo',
-    'Éclairage anti-éblouissement avec variateur tactile d''intensité et de température de couleur (2700K à 6500K), port de charge USB-C.',
-    45.00,
-    'Maison',
-    'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=800&q=80',
-    25
-  ),
-  (
-    'Sac à Dos Urbain Étanche UrbanRoll 24L',
-    'Tissu Cordura résistant aux intempéries, compartiment rembourré pour ordinateur 16", fermetures YKK étanches et bandes réfléchissantes.',
-    89.00,
-    'Mode',
-    'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80',
+    'Samsung Galaxy S24 Ultra (512 Go - Gris Titane)',
+    '<!--PROMO:225000-->
+Le fleuron ultime de Samsung avec processeur Snapdragon 8 Gen 3, écran Dynamic AMOLED 2X 120Hz, capteur photo 200 MP, stylet S-Pen intégré et cadre en titane ultra-résistant.',
+    195000,
+    'Smartphones & Tech',
+    'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=800&q=80',
     8
   ),
   (
-    'Gourde Isotherme Inox 750ml Alpine',
-    'Garde les boissons fraîches 24h et chaudes 12h. Double paroi sous vide sans BPA avec bouchon sport étanche en bambou.',
-    28.50,
-    'Maison',
+    'Apple iPhone 15 Pro Max (256 Go - Titane Naturel)',
+    '<!--PROMO:260000-->
+Puce A17 Pro gravée en 3nm, téléobjectif x5 périscopique, bouton Action personnalisable, port USB-C ultra-rapide et écran Super Retina XDR toujours activé.',
+    235000,
+    'Smartphones & Tech',
+    'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&q=80',
+    5
+  ),
+  (
+    'Casque Sans Fil Sony WH-1000XM5 ANC',
+    '<!--PROMO:58000-->
+La référence mondiale de la réduction de bruit active avec 8 micros, son Hi-Res sans fil LDAC, autonomie 30h avec charge ultra-rapide et confort exceptionnel.',
+    49500,
+    'Smartphones & Tech',
+    'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80',
+    14
+  ),
+  (
+    'Friteuse Sans Huile Philips Airfryer XXL 7.2L',
+    '<!--PROMO:42000-->
+Cuisine saine et croustillante avec jusqu''à 90% d''huile en moins grâce à la technologie Rapid Air. Capacité familiale XXL de 7.2L, écran tactile et 16 programmes automatiques.',
+    34000,
+    'Électroménager',
+    'https://images.unsplash.com/photo-1585515320310-259814833e62?w=800&q=80',
+    11
+  ),
+  (
+    'Robot Pétrin Moulinex Masterchef Grande 1500W',
+    '<!--PROMO:54000-->
+Moteur puissant 1500W avec bol inox grande capacité 6.7L. Mouvement planétaire avec pétrin, batteur et fouet pour pains, brioches et pâtisseries maison impeccables.',
+    46000,
+    'Électroménager',
+    'https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?w=800&q=80',
+    6
+  ),
+  (
+    'Machine à Café Espresso DeLonghi Dedica Deluxe',
+    'Corps ultra-compact tout en acier inoxydable, pression 15 bars professionnelle, buse vapeur Cappuccino ajustable et système Thermoblock de chauffe rapide en 35 secondes.',
+    29500,
+    'Maison & Cuisine',
+    'https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?w=800&q=80',
+    9
+  ),
+  (
+    'Aspirateur Balai Sans Fil Dyson V12 Detect Slim',
+    '<!--PROMO:115000-->
+Moteur numérique Dyson Hyperdymium puissant avec brosse optique révélant la poussière invisible, filtration HEPA à 99.99% et écran LCD affichant l''autonomie en temps réel.',
+    98000,
+    'Électroménager',
+    'https://images.unsplash.com/photo-1558317374-067fb5f30001?w=800&q=80',
+    4
+  ),
+  (
+    'Baskets Nike Air Max 270 (Noir & Blanc)',
+    '<!--PROMO:23000-->
+L''iconique coussin d''air Air Max 270 offrant un amorti moelleux inégalé toute la journée. Tige en mesh aéré respirant et semelle extérieure en caoutchouc durable.',
+    18500,
+    'Mode & Chaussures',
+    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80',
+    16
+  ),
+  (
+    'Montre Homme Fossil Neutra Chronographe Cuir Brun',
+    'Boîtier en acier inoxydable 44mm avec cadran bleu soleillé, mouvement chronographe à quartz précis et bracelet en cuir véritable avec surpiqûres élégantes.',
+    17000,
+    'Mode & Chaussures',
+    'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=800&q=80',
+    7
+  ),
+  (
+    'Lunettes de Soleil Ray-Ban Aviator Classic Polarized',
+    '<!--PROMO:18500-->
+Modèle légendaire RB3025 avec monture dorée ultralégère, verres minéraux polarisés G-15 offrant une protection UV400 totale et un contraste visuel parfait.',
+    14500,
+    'Mode & Chaussures',
+    'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=800&q=80',
+    12
+  ),
+  (
+    'Parfum Sauvage Dior Eau de Parfum 100ml',
+    '<!--PROMO:31000-->
+Sillage puissant et noble aux accords de bergamote de Calabre, poivre de Sichuan et absolu vanille de Papouasie. Flacon luxueux 100% authentique.',
+    26500,
+    'Beauté & Parfums',
+    'https://images.unsplash.com/photo-1594035910387-fea47794261f?w=800&q=80',
+    15
+  ),
+  (
+    'Tondeuse Cheveux & Barbe Philips Série 7000 Métal',
+    'Lames DualCut en acier auto-affûtées, 14 sabots et accessoires précis pour barbe, cheveux et corps. Étanche à 100% avec autonomie 120 minutes.',
+    8900,
+    'Beauté & Parfums',
+    'https://images.unsplash.com/photo-1621607512214-68297480165e?w=800&q=80',
+    20
+  ),
+  (
+    'Perceuse Visseuse Sans Fil Bosch Professional 18V',
+    '<!--PROMO:33500-->
+Moteur Brushless sans charbon endurant, couple max 50 Nm, fonction percussion pour béton et brique, livrée dans coffret L-BOXX avec 2 batteries et chargeur rapide.',
+    28000,
+    'Bricolage & Auto',
+    'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800&q=80',
+    8
+  ),
+  (
+    'Compresseur d''Air Portatif Électrique Xiaomi 2',
+    'Gonflage rapide des pneus de voiture, moto, vélo et ballons. Pression jusqu''à 150 PSI avec arrêt automatique, écran numérique et lampe LED intégrée.',
+    7800,
+    'Bricolage & Auto',
+    'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&q=80',
+    18
+  ),
+  (
+    'Enceinte Bluetooth JBL Charge 5 Étanche IP67',
+    '<!--PROMO:26000-->
+Son Pro original JBL puissant avec haut-parleur de graves séparé, autonomie 20 heures, certification étanche eau et poussière IP67, et fonction powerbank.',
+    22500,
+    'Smartphones & Tech',
+    'https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800&q=80',
+    10
+  ),
+  (
+    'Tapis de Course Pliable Motorisé ProForm City L6',
+    '<!--PROMO:99000-->
+Vitesse réglable jusqu''à 14 km/h, moteur 2.0 CHP silencieux, amorti ProShox protégeant les articulations et système de pliage compact SpaceSaver à plat.',
+    85000,
+    'Sport & Loisirs',
+    'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=800&q=80',
+    2
+  ),
+  (
+    'Montre Connectée Apple Watch Series 9 GPS 45mm',
+    'Puce S9 SiP puissante, écran ultra-lumineux 2000 nits, geste Toucher deux fois, ECG certifié, capteur d''oxygène sanguin et détection des chutes.',
+    68000,
+    'Smartphones & Tech',
+    'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
+    0
+  ),
+  (
+    'Gourde Isotherme Inox 1L Alpine Pro',
+    '<!--PROMO:3800-->
+Double paroi en acier inoxydable sous vide, garde les boissons froides 24h et chaudes 12h, sans BPA avec bouchon sport antifuite.',
+    2900,
+    'Maison & Cuisine',
     'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=800&q=80',
     0
   )
