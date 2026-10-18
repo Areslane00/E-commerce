@@ -59,10 +59,10 @@ export function CartDrawer() {
       />
 
       {/* Drawer Panel */}
-      <div className="fixed inset-y-0 right-0 rtl:right-auto rtl:left-0 max-w-full flex pl-10 rtl:pl-0 rtl:pr-10">
-        <div className="w-screen max-w-md bg-white dark:bg-zinc-900 border-l rtl:border-l-0 rtl:border-r border-zinc-200 dark:border-zinc-800 shadow-2xl flex flex-col animate-in slide-in-from-right rtl:slide-in-from-left duration-300">
+      <div className="fixed inset-y-0 right-0 rtl:right-auto rtl:left-0 max-w-full flex pl-0 sm:pl-10 rtl:pr-0 rtl:sm:pr-10">
+        <div className="w-screen max-w-full sm:max-w-md bg-white dark:bg-zinc-900 border-l rtl:border-l-0 rtl:border-r border-zinc-200 dark:border-zinc-800 shadow-2xl flex flex-col animate-in slide-in-from-right rtl:slide-in-from-left duration-300">
           {/* Header */}
-          <div className="p-5 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+          <div className="p-4 sm:p-5 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100">
                 <ShoppingBag className="w-5 h-5" />
@@ -78,14 +78,15 @@ export function CartDrawer() {
             </div>
             <button
               onClick={closeCart}
-              className="p-2 rounded-lg text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              className="p-2.5 rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              aria-label="Fermer le panier"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Items List */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3 sm:space-y-4">
             {items.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-12">
                 <div className="w-20 h-20 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 mb-4 animate-float">
@@ -105,16 +106,16 @@ export function CartDrawer() {
               items.map(({ product, quantity }) => (
                 <div
                   key={product.id}
-                  className="flex gap-4 p-3.5 rounded-2xl bg-zinc-50/80 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800/60"
+                  className="flex gap-3 sm:gap-4 p-3 sm:p-3.5 rounded-2xl bg-zinc-50/80 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800/60"
                 >
-                  <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 flex-shrink-0">
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 flex-shrink-0">
                     {product.image_url ? (
                       <Image
                         src={product.image_url}
                         alt={product.name}
                         fill
                         className="object-cover"
-                        sizes="80px"
+                        sizes="(max-width: 640px) 64px, 80px"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-zinc-400">
@@ -130,7 +131,7 @@ export function CartDrawer() {
                       </h4>
                       <button
                         onClick={() => removeItem(product.id)}
-                        className="text-zinc-400 hover:text-rose-500 transition-colors p-1"
+                        className="text-zinc-400 hover:text-rose-500 transition-colors p-1.5"
                         title={isAr ? "حذف" : "Supprimer"}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -145,8 +146,9 @@ export function CartDrawer() {
                       <div className="flex items-center gap-1.5 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-700 px-1 py-0.5">
                         <button
                           onClick={() => updateQuantity(product.id, quantity - 1)}
-                          className="w-6 h-6 rounded flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30"
+                          className="w-7 h-7 sm:w-6 sm:h-6 rounded flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30"
                           disabled={quantity <= 1}
+                          aria-label="Diminuer"
                         >
                           <Minus className="w-3.5 h-3.5" />
                         </button>
@@ -155,8 +157,9 @@ export function CartDrawer() {
                         </span>
                         <button
                           onClick={() => updateQuantity(product.id, quantity + 1)}
-                          className="w-6 h-6 rounded flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30"
+                          className="w-7 h-7 sm:w-6 sm:h-6 rounded flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30"
                           disabled={quantity >= product.stock}
+                          aria-label="Augmenter"
                         >
                           <Plus className="w-3.5 h-3.5" />
                         </button>

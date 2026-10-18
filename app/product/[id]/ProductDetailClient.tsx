@@ -86,13 +86,13 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
       </div>
 
       {/* Quantity Selector & Add to Cart Action */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
         {/* Quantity control */}
-        <div className="flex items-center justify-between border border-zinc-200 dark:border-zinc-800 rounded-2xl p-1 bg-zinc-50/50 dark:bg-zinc-900/50 w-full sm:w-40">
+        <div className="flex items-center justify-between border border-zinc-200 dark:border-zinc-800 rounded-2xl p-1 bg-zinc-50/50 dark:bg-zinc-900/50 w-full sm:w-40 min-h-[48px]">
           <button
             onClick={handleDecrement}
             disabled={isOutOfStock || quantity <= 1}
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-white dark:hover:bg-zinc-800 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+            className="w-11 h-11 rounded-xl flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-white dark:hover:bg-zinc-800 transition-colors disabled:opacity-30 disabled:pointer-events-none active:scale-95"
             aria-label="Diminuer"
           >
             <Minus className="w-4 h-4" />
@@ -105,7 +105,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
           <button
             onClick={handleIncrement}
             disabled={isOutOfStock || quantity >= product.stock}
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-white dark:hover:bg-zinc-800 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+            className="w-11 h-11 rounded-xl flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-white dark:hover:bg-zinc-800 transition-colors disabled:opacity-30 disabled:pointer-events-none active:scale-95"
             aria-label="Augmenter"
           >
             <Plus className="w-4 h-4" />
@@ -117,9 +117,9 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
           onClick={handleAddToCart}
           disabled={isOutOfStock}
           size="lg"
-          className="flex-1 gap-2 shadow-xl shadow-zinc-900/10 dark:shadow-none"
+          className="flex-1 h-12 gap-2 text-sm sm:text-base font-bold shadow-xl shadow-zinc-900/10 dark:shadow-none active:scale-[0.98]"
         >
-          <ShoppingBag className="w-5 h-5" />
+          <ShoppingBag className="w-5 h-5 flex-shrink-0" />
           <span>
             {isOutOfStock
               ? (isAr ? "المنتج غير متوفر حالياً" : "Produit épuisé")

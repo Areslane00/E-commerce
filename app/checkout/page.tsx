@@ -163,17 +163,17 @@ export default function CheckoutPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           {/* Checkout Form - Zero placeholder texts as requested */}
-          <div className="lg:col-span-7 bg-white dark:bg-zinc-900 rounded-3xl p-6 sm:p-8 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm">
-            <div className="flex items-center gap-2 pb-5 border-b border-zinc-100 dark:border-zinc-800 mb-6">
-              <Truck className="w-5 h-5 text-emerald-500" />
-              <h2 className="font-bold text-base text-zinc-900 dark:text-zinc-100">
+          <div className="lg:col-span-7 bg-white dark:bg-zinc-900 rounded-3xl p-4 sm:p-8 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm">
+            <div className="flex items-center gap-2 pb-4 sm:pb-5 border-b border-zinc-100 dark:border-zinc-800 mb-5 sm:mb-6">
+              <Truck className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+              <h2 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100">
                 {t.shippingInfo} (Algérie • 58 Wilayas)
               </h2>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
                   id="customer_name"
@@ -219,7 +219,7 @@ export default function CheckoutPage() {
                   </label>
                   <select
                     id="wilaya"
-                    className={`flex h-11 w-full rounded-xl border bg-white/70 dark:bg-zinc-900/70 px-4 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 dark:focus-visible:ring-zinc-100 transition-all cursor-pointer ${
+                    className={`flex h-11 w-full rounded-xl border bg-white/70 dark:bg-zinc-900/70 px-4 py-2 text-base sm:text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 dark:focus-visible:ring-zinc-100 transition-all cursor-pointer ${
                       errors.wilaya
                         ? "border-rose-500 focus-visible:ring-rose-500"
                         : "border-zinc-200 dark:border-zinc-800"
@@ -262,13 +262,13 @@ export default function CheckoutPage() {
                   id="notes"
                   rows={3}
                   placeholder=""
-                  className="w-full rounded-xl border border-zinc-200 bg-white/70 dark:bg-zinc-900/70 p-3 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 dark:focus-visible:ring-zinc-100 dark:border-zinc-800 text-foreground"
+                  className="w-full rounded-xl border border-zinc-200 bg-white/70 dark:bg-zinc-900/70 p-3 text-base sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 dark:focus-visible:ring-zinc-100 dark:border-zinc-800 text-foreground"
                   {...register("notes")}
                 />
               </div>
 
               {/* Cash On Delivery in Algeria Banner */}
-              <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60 flex items-start gap-3">
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60 flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <Banknote className="w-5 h-5" />
                 </div>

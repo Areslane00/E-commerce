@@ -85,16 +85,16 @@ export default function CartPage() {
               {items.map(({ product, quantity }) => (
                 <div
                   key={product.id}
-                  className="flex flex-col sm:flex-row gap-4 p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm transition-all"
+                  className="flex flex-row gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm transition-all"
                 >
-                  <div className="relative w-full sm:w-28 aspect-square rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex-shrink-0">
+                  <div className="relative w-20 h-20 sm:w-28 sm:h-28 aspect-square rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex-shrink-0">
                     {product.image_url ? (
                       <Image
                         src={product.image_url}
                         alt={product.name}
                         fill
                         className="object-cover"
-                        sizes="(max-width: 640px) 100vw, 112px"
+                        sizes="(max-width: 640px) 80px, 112px"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-zinc-400">
@@ -103,12 +103,12 @@ export default function CartPage() {
                     )}
                   </div>
 
-                  <div className="flex-1 flex flex-col justify-between">
+                  <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div>
                       <div className="flex justify-between items-start gap-2">
                         <Link
                           href={`/product/${product.id}`}
-                          className="font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-50 hover:underline"
+                          className="font-bold text-xs sm:text-base text-zinc-900 dark:text-zinc-50 hover:underline line-clamp-1"
                         >
                           {product.name}
                         </Link>
@@ -120,37 +120,39 @@ export default function CartPage() {
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
-                      <span className="inline-block mt-1 text-[11px] font-semibold text-zinc-500 uppercase">
+                      <span className="inline-block mt-0.5 text-[10px] sm:text-[11px] font-semibold text-zinc-500 uppercase">
                         {product.category}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800">
-                      <div className="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800/60 rounded-xl border border-zinc-200 dark:border-zinc-700 px-2 py-1">
+                    <div className="flex items-center justify-between mt-2 sm:mt-4 pt-2 sm:pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                      <div className="flex items-center gap-1.5 sm:gap-2 bg-zinc-50 dark:bg-zinc-800/60 rounded-xl border border-zinc-200 dark:border-zinc-700 px-1.5 sm:px-2 py-0.5 sm:py-1">
                         <button
                           onClick={() => updateQuantity(product.id, quantity - 1)}
                           className="w-7 h-7 rounded-lg flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-white dark:hover:bg-zinc-700 disabled:opacity-30"
                           disabled={quantity <= 1}
+                          aria-label="Diminuer"
                         >
                           <Minus className="w-3.5 h-3.5" />
                         </button>
-                        <span className="w-8 text-center text-xs font-bold text-zinc-900 dark:text-zinc-100">
+                        <span className="w-6 sm:w-8 text-center text-xs font-bold text-zinc-900 dark:text-zinc-100">
                           {quantity}
                         </span>
                         <button
                           onClick={() => updateQuantity(product.id, quantity + 1)}
                           className="w-7 h-7 rounded-lg flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-white dark:hover:bg-zinc-700 disabled:opacity-30"
                           disabled={quantity >= product.stock}
+                          aria-label="Augmenter"
                         >
                           <Plus className="w-3.5 h-3.5" />
                         </button>
                       </div>
 
                       <div className="text-right rtl:text-left">
-                        <span className="block text-xs text-zinc-400">
-                          {formatPrice(product.price)} x {quantity}
+                        <span className="block text-[11px] sm:text-xs text-zinc-400">
+                          {formatPrice(product.price)}
                         </span>
-                        <span className="text-base sm:text-lg font-extrabold text-zinc-900 dark:text-zinc-50 whitespace-nowrap">
+                        <span className="text-sm sm:text-lg font-extrabold text-zinc-900 dark:text-zinc-50 whitespace-nowrap">
                           {formatPrice(product.price * quantity)}
                         </span>
                       </div>
