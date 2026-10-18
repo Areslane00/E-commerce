@@ -129,16 +129,6 @@ function LoginForm() {
           Se connecter à l&apos;administration
         </Button>
       </form>
-
-      <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 text-center">
-        <p className="text-[11px] text-zinc-400 leading-relaxed">
-          Pour créer votre premier admin, inscrivez un utilisateur puis exécutez la requête SQL :
-          <br />
-          <code className="text-zinc-600 dark:text-zinc-300 font-mono text-[10px] bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded mt-1 inline-block">
-            UPDATE profiles SET role = &apos;admin&apos; WHERE email = &apos;...&apos;;
-          </code>
-        </p>
-      </div>
     </div>
   );
 }
