@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { OrderStatus } from "@/types";
+import { OrderStatus, Product } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -85,3 +85,36 @@ export function getStatusColor(status: OrderStatus): {
       };
   }
 }
+
+/**
+ * Normalise un produit en extrayant son original_price (colonne native ou fallback tag)
+ */
+export function parseProduct(p: any): Product {
+  if (!p) return p;
+  let original_price =
+    p.original_price != null && Number(p.original_price) > 0
+      ? Number(p.original_price)
+      : null;
+  let description = p.description || "";
+
+  // Si pas de colonne native en BDD, vérifier le tag transparent <!--PROMO:15000-->
+  if (!original_price && description) {
+    const match = description.match(/<!--PROMO:([0-9.]+)-->/);
+    if (match && match[1]) {
+      original_price = Number(match[1]);
+      description = description.replace(/<!--PROMO:[0-9.]+-->\s*/, "").trim();
+    }
+  }
+
+  return {
+    ...p,
+    description,
+    original_price: original_price && original_price > 0 ? original_price : null,
+  };
+}
+
+export function parseProducts(list: any[]): Product[] {
+  if (!list || !Array.isArray(list)) return [];
+  return list.map(parseProduct);
+}
+

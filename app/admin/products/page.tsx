@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ProductsManager } from "@/components/admin/ProductsManager";
 import { DEMO_PRODUCTS } from "@/lib/demoData";
 import { Product } from "@/types";
+import { parseProducts } from "@/lib/utils";
 
 export const revalidate = 0;
 
@@ -17,12 +18,12 @@ export default async function AdminProductsPage() {
       .order("created_at", { ascending: false });
 
     if (!error && data && data.length > 0) {
-      products = data as Product[];
+      products = parseProducts(data);
     } else {
-      products = DEMO_PRODUCTS;
+      products = parseProducts(DEMO_PRODUCTS);
     }
   } catch (err) {
-    products = DEMO_PRODUCTS;
+    products = parseProducts(DEMO_PRODUCTS);
   }
 
   return (

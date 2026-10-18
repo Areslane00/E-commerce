@@ -9,6 +9,7 @@ import { Product } from "@/types";
 import { productSchema, ProductFormValues } from "@/lib/validations";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase/client";
+import { parseProduct } from "@/lib/utils";
 import { UploadCloud, Image as ImageIcon, X, Loader2 } from "lucide-react";
 
 interface ProductModalProps {
@@ -45,14 +46,15 @@ export function ProductModal({
 
   useEffect(() => {
     if (product) {
+      const parsed = parseProduct(product);
       setFormData({
-        name: product.name,
-        description: product.description || "",
-        price: Number(product.price),
-        original_price: product.original_price ? Number(product.original_price) : null,
-        category: product.category,
-        stock: product.stock,
-        image_url: product.image_url || "",
+        name: parsed.name,
+        description: parsed.description || "",
+        price: Number(parsed.price),
+        original_price: parsed.original_price ? Number(parsed.original_price) : null,
+        category: parsed.category,
+        stock: parsed.stock,
+        image_url: parsed.image_url || "",
       });
     } else {
       setFormData({
@@ -115,9 +117,20 @@ export function ProductModal({
 
     setIsSubmitting(true);
     try {
+      const cleanDesc = (validated.data.description || "")
+        .replace(/<!--PROMO:[0-9.]+-->\s*/, "")
+        .trim();
+
+      const promoTag =
+        validated.data.original_price && Number(validated.data.original_price) > 0
+          ? `<!--PROMO:${Number(validated.data.original_price)}-->\n`
+          : "";
+
+      const finalDescription = promoTag ? `${promoTag}${cleanDesc}` : cleanDesc;
+
       const payload: any = {
         name: validated.data.name,
-        description: validated.data.description || null,
+        description: finalDescription || null,
         price: validated.data.price,
         category: validated.data.category,
         stock: validated.data.stock,
@@ -149,15 +162,15 @@ export function ProductModal({
             .select()
             .single();
           if (retry.error) throw new Error(retry.error.message);
-          savedProduct = retry.data as Product;
+          savedProduct = parseProduct(retry.data);
         } else if (res.error) {
           throw new Error(res.error.message);
         } else {
-          savedProduct = res.data as Product;
+          savedProduct = parseProduct(res.data);
         }
 
         success(`Le produit "${validated.data.name}" a été modifié.`, "Produit mis à jour");
-        onSuccess(savedProduct, false);
+        if (savedProduct) onSuccess(savedProduct, false);
       } else {
         const res = await supabase
           .from("products")
@@ -173,15 +186,15 @@ export function ProductModal({
             .select()
             .single();
           if (retry.error) throw new Error(retry.error.message);
-          savedProduct = retry.data as Product;
+          savedProduct = parseProduct(retry.data);
         } else if (res.error) {
           throw new Error(res.error.message);
         } else {
-          savedProduct = res.data as Product;
+          savedProduct = parseProduct(res.data);
         }
 
         success(`Nouveau produit "${validated.data.name}" créé avec succès !`, "Produit créé");
-        onSuccess(savedProduct, true);
+        if (savedProduct) onSuccess(savedProduct, true);
       }
 
       onClose();

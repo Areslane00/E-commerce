@@ -6,6 +6,7 @@ import { ProductGrid } from "@/components/ProductGrid";
 import { createClient } from "@/lib/supabase/server";
 import { DEMO_PRODUCTS } from "@/lib/demoData";
 import { Product } from "@/types";
+import { parseProducts } from "@/lib/utils";
 
 export const revalidate = 0; // Données dynamiques en direct
 
@@ -24,29 +25,17 @@ export default async function HomePage({
       .order("created_at", { ascending: false });
 
     if (!error && data && data.length > 0) {
-      products = (data as Product[])
-        .map((p) => {
-          if (p.original_price) return p;
-          const nameLower = p.name.toLowerCase();
-          if (nameLower.includes("téléphone") || nameLower.includes("telephone")) {
-            return { ...p, original_price: Math.round(p.price * 1.2) };
-          }
-          if (nameLower.includes("casque") || nameLower.includes("montre") || nameLower.includes("lampe")) {
-            return { ...p, original_price: Math.round(p.price * 1.25) };
-          }
-          return p;
-        })
-        .sort((a, b) => {
-          const aInStock = a.stock > 0 ? 1 : 0;
-          const bInStock = b.stock > 0 ? 1 : 0;
-          if (aInStock !== bInStock) return bInStock - aInStock;
-          return 0;
-        });
+      products = parseProducts(data).sort((a, b) => {
+        const aInStock = a.stock > 0 ? 1 : 0;
+        const bInStock = b.stock > 0 ? 1 : 0;
+        if (aInStock !== bInStock) return bInStock - aInStock;
+        return 0;
+      });
     } else {
-      products = DEMO_PRODUCTS;
+      products = parseProducts(DEMO_PRODUCTS);
     }
   } catch (err) {
-    products = DEMO_PRODUCTS;
+    products = parseProducts(DEMO_PRODUCTS);
   }
 
   const query = searchParams?.q || "";

@@ -7,7 +7,7 @@ import { Footer } from "@/components/Footer";
 import { createClient } from "@/lib/supabase/server";
 import { DEMO_PRODUCTS } from "@/lib/demoData";
 import { Product } from "@/types";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, parseProduct } from "@/lib/utils";
 import { ProductDetailClient } from "./ProductDetailClient";
 import { ArrowLeft, ShieldCheck, Truck, RotateCcw } from "lucide-react";
 
@@ -29,26 +29,16 @@ export default async function ProductDetailPage({
       .single();
 
     if (data) {
-      product = data as Product;
+      product = parseProduct(data);
     } else {
-      product = DEMO_PRODUCTS.find((p) => p.id === params.id) || null;
+      product = parseProduct(DEMO_PRODUCTS.find((p) => p.id === params.id) || null);
     }
   } catch (err) {
-    product = DEMO_PRODUCTS.find((p) => p.id === params.id) || null;
+    product = parseProduct(DEMO_PRODUCTS.find((p) => p.id === params.id) || null);
   }
 
   if (!product) {
     notFound();
-  }
-
-  // Si pas de prix barré en BDD pour les tests initiaux
-  if (!product.original_price) {
-    const nameLower = product.name.toLowerCase();
-    if (nameLower.includes("téléphone") || nameLower.includes("telephone")) {
-      product.original_price = Math.round(product.price * 1.2);
-    } else if (nameLower.includes("casque") || nameLower.includes("montre") || nameLower.includes("lampe")) {
-      product.original_price = Math.round(product.price * 1.25);
-    }
   }
 
   const hasPromo = Boolean(

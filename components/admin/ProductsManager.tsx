@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Product } from "@/types";
-import { formatPrice, cn } from "@/lib/utils";
+import { formatPrice, cn, parseProduct } from "@/lib/utils";
 import { ProductModal } from "./ProductModal";
 import { QuickStockControl } from "./QuickStockControl";
 import { Modal } from "@/components/ui/Modal";
@@ -71,11 +71,12 @@ export function ProductsManager({ initialProducts }: ProductsManagerProps) {
 
   // Handle Add/Edit modal success
   const handleProductSuccess = (updatedProduct: Product, isNew: boolean) => {
+    const parsed = parseProduct(updatedProduct);
     if (isNew) {
-      setProducts((prev) => [updatedProduct, ...prev]);
+      setProducts((prev) => [parsed, ...prev]);
     } else {
       setProducts((prev) =>
-        prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
+        prev.map((p) => (p.id === parsed.id ? parsed : p))
       );
     }
   };
