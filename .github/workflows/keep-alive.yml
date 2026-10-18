@@ -1,0 +1,38 @@
+name: Supabase Keep-Alive Cron
+
+# Déclenchement automatique planifié
+on:
+  schedule:
+    # S'exécute tous les 2 jours à 06:00 UTC (07:00 heure algérienne)
+    - cron: '0 6 */2 * *'
+  # Permet également un déclenchement manuel depuis l'onglet Actions sur GitHub
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    name: Ping Supabase Database
+    runs-on: ubuntu-latest
+    steps:
+      - name: Effectuer la requête Keep-Alive vers Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://osljdnfertcrkunnavpv.supabase.co' }}
+          SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zbGpkbmZlcnRjcmt1bm5hdnB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzMDk3MDUsImV4cCI6MjEwNzg4NTcwNX0.0ePCCz1F5KTh-rLaXvZtPUMr4JawSQQa4hxZqcMSvYg' }}
+        run: |
+          echo "Envoi de la requête Keep-Alive vers PostgreSQL Supabase..."
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X GET "$SUPABASE_URL/rest/v1/products?select=id,name&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Cache-Control: no-cache, no-store")
+          
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          echo "Statut HTTP reçu: $HTTP_STATUS"
+          echo "Réponse: $BODY"
+
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+            echo "Succès : La base de données Supabase a bien été interrogée. Projet maintenu actif !"
+          else
+            echo "Erreur lors de la requête Keep-Alive (Code HTTP $HTTP_STATUS)"
+            exit 1
+          fi
