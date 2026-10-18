@@ -1,6 +1,6 @@
-# 🛍️ NOVA Store — Application E-Commerce Moderne & Complète
+# 🛍️ AresStore — Application E-Commerce Moderne & Complète (Algérie • 58 Wilayas)
 
-Application e-commerce complète, performante et responsive, prête pour le déploiement sur **Vercel** avec **Supabase** comme backend (Base de données PostgreSQL, Authentification, Stockage d'images et Realtime).
+Application e-commerce multi-catégories complète, performante et bilingue (**Français & Arabe / العربية** avec support RTL), en Dinars Algériens (**DZD / د.ج**), avec livraison et paiement à la livraison sur l'ensemble des **58 Wilayas d'Algérie**. Prête pour le déploiement sur **Vercel** avec **Supabase** comme backend.
 
 ---
 

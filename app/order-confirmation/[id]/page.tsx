@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, Suspense } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import confetti from "canvas-confetti";
@@ -8,6 +8,8 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/Button";
 import { formatPrice } from "@/lib/utils";
+import { useLanguageStore } from "@/store/useLanguageStore";
+import { translations } from "@/lib/translations";
 import {
   CheckCircle2,
   PackageCheck,
@@ -22,6 +24,16 @@ function ConfirmationContent({ orderNumber }: { orderNumber: string }) {
   const customerName = searchParams?.get("name") || "Cher client";
   const rawTotal = searchParams?.get("total");
   const total = rawTotal ? parseFloat(rawTotal) : null;
+
+  const { lang } = useLanguageStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isAr = mounted && lang === "ar";
+  const t = translations[mounted ? lang : "fr"];
 
   useEffect(() => {
     const duration = 2.5 * 1000;
@@ -60,23 +72,23 @@ function ConfirmationContent({ orderNumber }: { orderNumber: string }) {
 
       <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-semibold mb-3">
         <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-        Commande confirmée avec succès
+        <span>{t.orderConfirmed}</span>
       </div>
 
       <h1 className="text-3xl sm:text-4xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight">
-        Merci pour votre commande, {customerName} !
+        {t.thanks} {customerName} !
       </h1>
 
       <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400 max-w-md leading-relaxed">
-        Votre commande a bien été enregistrée et transmise à notre équipe logistique pour préparation immédiate.
+        {t.orderRecorded}
       </p>
 
       {/* Order Details Card */}
-      <div className="w-full mt-8 p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm text-left space-y-6">
+      <div className="w-full mt-8 p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm text-left rtl:text-right space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-zinc-100 dark:border-zinc-800">
           <div>
             <span className="text-[11px] uppercase font-bold text-zinc-400 tracking-wider">
-              Numéro de commande
+              {t.orderNumber}
             </span>
             <div className="text-xl font-extrabold text-zinc-900 dark:text-zinc-50 mt-0.5 font-mono">
               {orderNumber}
@@ -84,21 +96,21 @@ function ConfirmationContent({ orderNumber }: { orderNumber: string }) {
           </div>
 
           {total !== null && (
-            <div className="sm:text-right">
+            <div className="sm:text-right rtl:sm:text-left">
               <span className="text-[11px] uppercase font-bold text-zinc-400 tracking-wider">
-                Montant à régler à la livraison
+                {t.amountToPay}
               </span>
-              <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5">
+              <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5 whitespace-nowrap">
                 {formatPrice(total)}
               </div>
             </div>
           )}
         </div>
 
-        {/* Steps Timeline */}
+        {/* Steps Timeline in Algeria */}
         <div className="space-y-4">
           <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-200">
-            Prochaines étapes de votre livraison
+            {t.nextSteps}
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -107,10 +119,10 @@ function ConfirmationContent({ orderNumber }: { orderNumber: string }) {
                 <PackageCheck className="w-4 h-4" />
               </div>
               <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 mb-1">
-                1. Préparation
+                {t.step1Title}
               </h4>
               <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                Notre équipe emballe vos articles avec le plus grand soin.
+                {t.step1Desc}
               </p>
             </div>
 
@@ -119,10 +131,10 @@ function ConfirmationContent({ orderNumber }: { orderNumber: string }) {
                 <PhoneCall className="w-4 h-4" />
               </div>
               <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 mb-1">
-                2. Appel du livreur
+                {t.step2Title}
               </h4>
               <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                Le livreur vous contacte par téléphone avant son passage.
+                {t.step2Desc}
               </p>
             </div>
 
@@ -131,10 +143,10 @@ function ConfirmationContent({ orderNumber }: { orderNumber: string }) {
                 <Truck className="w-4 h-4" />
               </div>
               <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 mb-1">
-                3. Paiement en espèces
+                {t.step3Title}
               </h4>
               <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                Vérifiez le colis et réglez en espèces lors de la remise.
+                {t.step3Desc}
               </p>
             </div>
           </div>
@@ -144,8 +156,8 @@ function ConfirmationContent({ orderNumber }: { orderNumber: string }) {
       <div className="mt-8 flex flex-col sm:flex-row items-center gap-4">
         <Link href="/">
           <Button size="lg" className="gap-2 font-bold">
-            Continuer mes achats
-            <ArrowRight className="w-4 h-4" />
+            <span>{t.continueShopping}</span>
+            <ArrowRight className="w-4 h-4 rtl:rotate-180" />
           </Button>
         </Link>
       </div>

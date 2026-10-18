@@ -68,7 +68,7 @@ export default function AdminLayout({
             <Sparkles className="w-4 h-4 text-emerald-400 dark:text-emerald-600" />
           </div>
           <span className="font-extrabold text-sm text-zinc-900 dark:text-zinc-50">
-            NOVA Admin
+            AresStore Admin
           </span>
         </div>
 

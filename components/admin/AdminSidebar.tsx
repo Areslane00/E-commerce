@@ -61,7 +61,7 @@ export function AdminSidebar({ isRealtimeConnected = true }: AdminSidebarProps) 
             </div>
             <div>
               <div className="font-extrabold text-sm tracking-tight text-zinc-900 dark:text-zinc-50 leading-none">
-                NOVA Admin
+                AresStore Admin
               </div>
               <span className="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider">
                 E-Commerce Manager

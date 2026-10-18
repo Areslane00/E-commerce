@@ -11,6 +11,8 @@ import { Footer } from "@/components/Footer";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useCartStore } from "@/store/useCartStore";
+import { useLanguageStore } from "@/store/useLanguageStore";
+import { translations } from "@/lib/translations";
 import { useToast } from "@/components/ui/Toast";
 import { checkoutSchema, CheckoutFormValues } from "@/lib/validations";
 import { formatPrice } from "@/lib/utils";
@@ -18,15 +20,17 @@ import {
   ShieldCheck,
   Truck,
   ArrowLeft,
-  CheckCircle,
-  AlertCircle,
   Banknote,
   ShoppingBag,
+  AlertCircle,
 } from "lucide-react";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, clearCart, getTotalPrice, getTotalItems } = useCartStore();
+  const { lang } = useLanguageStore();
+  const t = translations[lang];
+
   const { error: toastError, success: toastSuccess } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -52,7 +56,10 @@ export default function CheckoutPage() {
 
   const onSubmit = async (data: CheckoutFormValues) => {
     if (items.length === 0) {
-      toastError("Votre panier est vide.", "Impossible de commander");
+      toastError(
+        lang === "ar" ? "سلة المشتريات فارغة." : "Votre panier est vide.",
+        lang === "ar" ? "تنبيه" : "Impossible de commander"
+      );
       return;
     }
 
@@ -76,14 +83,25 @@ export default function CheckoutPage() {
       }
 
       const orderData = result.order;
-      const orderNumber = orderData?.order_number || "NOVA-" + Math.floor(Math.random() * 90000 + 10000);
+      const orderNumber =
+        orderData?.order_number ||
+        "ARES-" + Math.floor(Math.random() * 90000 + 10000);
 
       // Vider le panier après commande réussie
       clearCart();
-      toastSuccess("Votre commande a été enregistrée avec succès !", "Succès");
+      toastSuccess(
+        lang === "ar"
+          ? "تم تسجيل طلبيتك بنجاح !"
+          : "Votre commande a été enregistrée avec succès !",
+        lang === "ar" ? "نجاح" : "Succès"
+      );
 
-      // Redirection vers la page de confirmation
-      router.push(`/order-confirmation/${encodeURIComponent(orderNumber)}?name=${encodeURIComponent(data.customer_name)}&total=${orderData?.total || totalPrice}`);
+      // Redirection vers la confirmation
+      router.push(
+        `/order-confirmation/${encodeURIComponent(orderNumber)}?name=${encodeURIComponent(
+          data.customer_name
+        )}&total=${orderData?.total || totalPrice}`
+      );
     } catch (err: any) {
       setServerError(err.message || "Erreur de connexion au serveur.");
       toastError(err.message || "Une erreur est survenue.", "Erreur");
@@ -100,12 +118,10 @@ export default function CheckoutPage() {
           <div className="w-16 h-16 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 mb-4">
             <ShoppingBag className="w-8 h-8" />
           </div>
-          <h2 className="text-xl font-bold mb-2">Votre panier est vide</h2>
-          <p className="text-xs text-zinc-500 mb-6">
-            Ajoutez au moins un article avant de pouvoir finaliser votre commande.
-          </p>
+          <h2 className="text-xl font-bold mb-2">{t.cartEmpty}</h2>
+          <p className="text-xs text-zinc-500 mb-6">{t.cartEmptySubtitle}</p>
           <Link href="/">
-            <Button>Retourner à la boutique</Button>
+            <Button>{t.continueShopping}</Button>
           </Link>
         </main>
         <Footer />
@@ -122,34 +138,36 @@ export default function CheckoutPage() {
           href="/cart"
           className="inline-flex items-center gap-2 text-xs font-semibold text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors mb-6"
         >
-          <ArrowLeft className="w-4 h-4" />
-          Modifier mon panier
+          <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
+          <span>{lang === "ar" ? "العودة إلى السلة" : "Modifier mon panier"}</span>
         </Link>
 
         <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-50 tracking-tight mb-2">
-          Finaliser la commande
+          {t.checkoutTitle}
         </h1>
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-8">
-          Renseignez vos coordonnées de livraison. Vous paierez en espèces à la réception de votre colis.
+          {t.checkoutSubtitle}
         </p>
 
         {serverError && (
           <div className="mb-6 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 flex items-start gap-3 text-xs text-rose-800 dark:text-rose-200">
             <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-600 dark:text-rose-400" />
             <div>
-              <p className="font-bold">Impossible de valider votre commande</p>
+              <p className="font-bold">
+                {lang === "ar" ? "تعذر تأكيد الطلب" : "Impossible de valider votre commande"}
+              </p>
               <p className="mt-0.5">{serverError}</p>
             </div>
           </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-          {/* Checkout Form */}
+          {/* Checkout Form - Zero placeholder texts as requested */}
           <div className="lg:col-span-7 bg-white dark:bg-zinc-900 rounded-3xl p-6 sm:p-8 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm">
             <div className="flex items-center gap-2 pb-5 border-b border-zinc-100 dark:border-zinc-800 mb-6">
               <Truck className="w-5 h-5 text-emerald-500" />
               <h2 className="font-bold text-base text-zinc-900 dark:text-zinc-100">
-                Informations de Livraison
+                {t.shippingInfo} (Algérie • 58 Wilayas)
               </h2>
             </div>
 
@@ -157,16 +175,16 @@ export default function CheckoutPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
                   id="customer_name"
-                  label="Nom complet *"
-                  placeholder="ex: Jean Dupont"
+                  label={t.fullNameLabel}
+                  placeholder=""
                   error={errors.customer_name?.message}
                   {...register("customer_name")}
                 />
 
                 <Input
                   id="phone"
-                  label="Numéro de Téléphone *"
-                  placeholder="ex: 06 12 34 56 78"
+                  label={t.phoneLabel}
+                  placeholder=""
                   error={errors.phone?.message}
                   {...register("phone")}
                 />
@@ -175,8 +193,8 @@ export default function CheckoutPage() {
               <Input
                 id="email"
                 type="email"
-                label="Email (optionnel pour confirmation)"
-                placeholder="ex: jean.dupont@email.com"
+                label={t.emailLabel}
+                placeholder=""
                 error={errors.email?.message}
                 {...register("email")}
               />
@@ -185,8 +203,8 @@ export default function CheckoutPage() {
                 <div className="sm:col-span-2">
                   <Input
                     id="address"
-                    label="Adresse de livraison *"
-                    placeholder="Rue, bâtiment, numéro de porte..."
+                    label={t.addressLabel}
+                    placeholder=""
                     error={errors.address?.message}
                     {...register("address")}
                   />
@@ -194,8 +212,8 @@ export default function CheckoutPage() {
                 <div>
                   <Input
                     id="city"
-                    label="Ville *"
-                    placeholder="ex: Paris, Lyon..."
+                    label={t.cityLabel}
+                    placeholder=""
                     error={errors.city?.message}
                     {...register("city")}
                   />
@@ -207,28 +225,28 @@ export default function CheckoutPage() {
                   htmlFor="notes"
                   className="block text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400"
                 >
-                  Instructions pour le livreur (optionnel)
+                  {t.notesLabel}
                 </label>
                 <textarea
                   id="notes"
                   rows={3}
-                  placeholder="Code d'entrée, créneau d'appel souhaité, etc."
+                  placeholder=""
                   className="w-full rounded-xl border border-zinc-200 bg-white/70 dark:bg-zinc-900/70 p-3 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 dark:focus-visible:ring-zinc-100 dark:border-zinc-800 text-foreground"
                   {...register("notes")}
                 />
               </div>
 
-              {/* Cash On Delivery Confirmation */}
+              {/* Cash On Delivery in Algeria Banner */}
               <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60 flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <Banknote className="w-5 h-5" />
                 </div>
                 <div className="text-xs">
                   <h4 className="font-bold text-zinc-900 dark:text-zinc-100">
-                    Mode de paiement : En espèces à la livraison
+                    {t.codTitle}
                   </h4>
                   <p className="text-zinc-500 dark:text-zinc-400 mt-0.5 leading-relaxed">
-                    Vous réglerez le montant exact directement auprès du livreur lors de la remise de votre commande.
+                    {t.codDesc}
                   </p>
                 </div>
               </div>
@@ -239,7 +257,7 @@ export default function CheckoutPage() {
                 isLoading={isSubmitting}
                 className="w-full text-base font-bold shadow-lg shadow-zinc-900/10 dark:shadow-none"
               >
-                Confirmer la commande ({formatPrice(totalPrice)})
+                {t.confirmOrder} ({formatPrice(totalPrice)})
               </Button>
             </form>
           </div>
@@ -247,7 +265,7 @@ export default function CheckoutPage() {
           {/* Cart Review Side Panel */}
           <div className="lg:col-span-5 bg-zinc-50/80 dark:bg-zinc-900/60 rounded-3xl p-6 border border-zinc-200/80 dark:border-zinc-800/80 space-y-5">
             <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100">
-              Articles commandés ({totalItems})
+              {lang === "ar" ? "المنتجات المطلوبة" : "Articles commandés"} ({totalItems})
             </h3>
 
             <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
@@ -275,9 +293,11 @@ export default function CheckoutPage() {
                     <p className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">
                       {product.name}
                     </p>
-                    <p className="text-zinc-400 text-[11px]">Qté : {quantity}</p>
+                    <p className="text-zinc-400 text-[11px]">
+                      {lang === "ar" ? "الكمية :" : "Qté :"} {quantity}
+                    </p>
                   </div>
-                  <div className="font-bold text-zinc-900 dark:text-zinc-100">
+                  <div className="font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">
                     {formatPrice(product.price * quantity)}
                   </div>
                 </div>
@@ -286,15 +306,15 @@ export default function CheckoutPage() {
 
             <div className="space-y-2 pt-4 border-t border-zinc-200 dark:border-zinc-800 text-xs">
               <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
-                <span>Sous-total</span>
+                <span>{t.subtotal}</span>
                 <span>{formatPrice(totalPrice)}</span>
               </div>
               <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
-                <span>Livraison</span>
-                <span className="text-emerald-600 font-bold">Gratuite</span>
+                <span>{t.delivery} (58 Wilayas)</span>
+                <span className="text-emerald-600 font-bold">{t.free}</span>
               </div>
               <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800 flex justify-between items-baseline font-bold text-sm">
-                <span>Total à régler</span>
+                <span>{t.totalToPay}</span>
                 <span className="text-xl font-black text-zinc-900 dark:text-zinc-50">
                   {formatPrice(totalPrice)}
                 </span>
@@ -303,7 +323,11 @@ export default function CheckoutPage() {
 
             <div className="pt-2 flex items-center gap-2 text-[11px] text-zinc-400">
               <ShieldCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-              <span>Vos informations personnelles sont protégées et chiffrées.</span>
+              <span>
+                {lang === "ar"
+                  ? "معلوماتكم محمية ومؤمنة بالكامل."
+                  : "Vos informations sont sécurisées et réservées à la livraison."}
+              </span>
             </div>
           </div>
         </div>

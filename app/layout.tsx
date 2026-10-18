@@ -7,8 +7,8 @@ import { CartDrawer } from "@/components/CartDrawer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "NOVA Store | E-commerce Moderne & Paiement à la Livraison",
-  description: "Boutique en ligne moderne d'équipements technologiques et accessoires avec paiement à la livraison.",
+  title: "AresStore | Boutique en ligne en Algérie • Paiement à la livraison",
+  description: "Commandez en ligne partout en Algérie (58 Wilayas) et payez en espèces à la réception de votre colis. Tout ce dont vous avez besoin au meilleur prix.",
 };
 
 export default function RootLayout({

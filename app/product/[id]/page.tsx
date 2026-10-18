@@ -51,8 +51,8 @@ export default async function ProductDetailPage({
           href="/"
           className="inline-flex items-center gap-2 text-xs font-semibold text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors mb-8"
         >
-          <ArrowLeft className="w-4 h-4" />
-          Retour au catalogue
+          <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
+          <span>Retour au catalogue / العودة للمتجر</span>
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
@@ -84,30 +84,32 @@ export default async function ProductDetailPage({
                 {product.name}
               </h1>
               <div className="mt-4 flex items-baseline gap-3">
-                <span className="text-3xl sm:text-4xl font-black text-zinc-900 dark:text-zinc-50">
+                <span className="text-3xl sm:text-4xl font-black text-zinc-900 dark:text-zinc-50 whitespace-nowrap">
                   {formatPrice(product.price)}
                 </span>
-                <span className="text-xs text-zinc-400">TTC / Paiement à la livraison</span>
+                <span className="text-xs text-zinc-400">
+                  Paiement à la livraison en Algérie
+                </span>
               </div>
             </div>
 
             {/* Description */}
             <div className="prose dark:prose-invert text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-b border-zinc-200/80 dark:border-zinc-800/80 py-5">
               <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-200 mb-2">
-                Description du produit
+                Description / تفاصيل المنتج
               </h4>
-              <p>{product.description || "Aucune description détaillée."}</p>
+              <p>{product.description || "Produit de haute qualité disponible à la commande dès maintenant."}</p>
             </div>
 
             {/* Interactive Client Component for Stock & Quantity */}
             <ProductDetailClient product={product} />
 
-            {/* Guarantees Box */}
+            {/* Guarantees Box for Algeria */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-zinc-200/80 dark:border-zinc-800/80">
               <div className="flex items-center gap-2.5 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800">
                 <Truck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                 <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                  Livraison 24h à 48h
+                  Livraison 58 Wilayas
                 </span>
               </div>
               <div className="flex items-center gap-2.5 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800">
@@ -119,7 +121,7 @@ export default async function ProductDetailPage({
               <div className="flex items-center gap-2.5 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800">
                 <RotateCcw className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                 <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                  Retour sous 14 jours
+                  Vérification du colis
                 </span>
               </div>
             </div>

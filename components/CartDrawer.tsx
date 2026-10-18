@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
+import { useLanguageStore } from "@/store/useLanguageStore";
+import { translations } from "@/lib/translations";
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 
@@ -18,6 +20,16 @@ export function CartDrawer() {
     getTotalPrice,
     getTotalItems,
   } = useCartStore();
+
+  const { lang } = useLanguageStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isAr = mounted && lang === "ar";
+  const t = translations[mounted ? lang : "fr"];
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -47,8 +59,8 @@ export function CartDrawer() {
       />
 
       {/* Drawer Panel */}
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800 shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+      <div className="fixed inset-y-0 right-0 rtl:right-auto rtl:left-0 max-w-full flex pl-10 rtl:pl-0 rtl:pr-10">
+        <div className="w-screen max-w-md bg-white dark:bg-zinc-900 border-l rtl:border-l-0 rtl:border-r border-zinc-200 dark:border-zinc-800 shadow-2xl flex flex-col animate-in slide-in-from-right rtl:slide-in-from-left duration-300">
           {/* Header */}
           <div className="p-5 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -57,10 +69,10 @@ export function CartDrawer() {
               </div>
               <div>
                 <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-50">
-                  Mon Panier
+                  {t.cartTitle}
                 </h2>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                  {totalItems} article{totalItems > 1 ? "s" : ""}
+                  {totalItems} {isAr ? "منتج" : `article${totalItems > 1 ? "s" : ""}`}
                 </p>
               </div>
             </div>
@@ -80,13 +92,13 @@ export function CartDrawer() {
                   <ShoppingBag className="w-10 h-10 stroke-[1.5]" />
                 </div>
                 <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
-                  Votre panier est vide
+                  {t.cartEmpty}
                 </h3>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-xs mb-6">
-                  Découvrez nos nouveautés et ajoutez des articles à votre panier.
+                  {t.cartEmptySubtitle}
                 </p>
                 <Button variant="outline" size="sm" onClick={closeCart}>
-                  Continuer mes achats
+                  {t.continueShopping}
                 </Button>
               </div>
             ) : (
@@ -119,14 +131,14 @@ export function CartDrawer() {
                       <button
                         onClick={() => removeItem(product.id)}
                         className="text-zinc-400 hover:text-rose-500 transition-colors p-1"
-                        title="Supprimer"
+                        title={isAr ? "حذف" : "Supprimer"}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
 
                     <div className="text-xs text-zinc-500 dark:text-zinc-400">
-                      {formatPrice(product.price)} / unité
+                      {formatPrice(product.price)}
                     </div>
 
                     <div className="flex items-center justify-between mt-2">
@@ -150,7 +162,7 @@ export function CartDrawer() {
                         </button>
                       </div>
 
-                      <div className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
+                      <div className="text-sm font-bold text-zinc-900 dark:text-zinc-50 whitespace-nowrap">
                         {formatPrice(product.price * quantity)}
                       </div>
                     </div>
@@ -165,20 +177,20 @@ export function CartDrawer() {
             <div className="p-5 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 space-y-4">
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs text-zinc-500 dark:text-zinc-400">
-                  <span>Sous-total</span>
+                  <span>{t.subtotal}</span>
                   <span>{formatPrice(totalPrice)}</span>
                 </div>
                 <div className="flex justify-between text-xs text-zinc-500 dark:text-zinc-400">
-                  <span>Livraison</span>
+                  <span>{t.delivery} (58 Wilayas)</span>
                   <span className="text-emerald-600 dark:text-emerald-400 font-medium">
-                    Gratuite
+                    {t.free}
                   </span>
                 </div>
                 <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800 flex justify-between items-baseline">
                   <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                    Total
+                    {t.totalToPay}
                   </span>
-                  <span className="text-xl font-extrabold text-zinc-900 dark:text-zinc-50">
+                  <span className="text-xl font-extrabold text-zinc-900 dark:text-zinc-50 whitespace-nowrap">
                     {formatPrice(totalPrice)}
                   </span>
                 </div>
@@ -186,8 +198,8 @@ export function CartDrawer() {
 
               <Link href="/checkout" onClick={closeCart} className="block w-full">
                 <Button className="w-full gap-2 text-sm font-semibold shadow-lg shadow-zinc-900/10 dark:shadow-none">
-                  Commander ({formatPrice(totalPrice)})
-                  <ArrowRight className="w-4 h-4" />
+                  <span>{t.checkoutButton} ({formatPrice(totalPrice)})</span>
+                  <ArrowRight className="w-4 h-4 rtl:rotate-180" />
                 </Button>
               </Link>
             </div>

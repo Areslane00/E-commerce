@@ -5,12 +5,17 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ShoppingBag, Search, ShieldCheck, Sparkles } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
+import { useLanguageStore } from "@/store/useLanguageStore";
+import { translations } from "@/lib/translations";
 import { ThemeToggle } from "./ThemeToggle";
+import { LanguageToggle } from "./LanguageToggle";
 
 function SearchInput() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState(searchParams?.get("q") || "");
+  const { lang } = useLanguageStore();
+  const t = translations[lang];
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,13 +31,13 @@ function SearchInput() {
       onSubmit={handleSearchSubmit}
       className="hidden md:flex flex-1 max-w-md items-center relative"
     >
-      <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 pointer-events-none" />
+      <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 rtl:left-auto rtl:right-3.5 pointer-events-none" />
       <input
         type="search"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Rechercher un produit, écouteurs, montre..."
-        className="w-full h-10 pl-9 pr-4 rounded-xl text-xs bg-zinc-100/80 dark:bg-zinc-900/80 border border-transparent focus:border-zinc-300 dark:focus:border-zinc-700 focus:bg-white dark:focus:bg-zinc-900 focus:outline-none transition-all placeholder:text-zinc-400 text-foreground"
+        placeholder=""
+        className="w-full h-10 pl-9 rtl:pl-4 rtl:pr-9 pr-4 rounded-xl text-xs bg-zinc-100/80 dark:bg-zinc-900/80 border border-transparent focus:border-zinc-300 dark:focus:border-zinc-700 focus:bg-white dark:focus:bg-zinc-900 focus:outline-none transition-all text-foreground"
       />
     </form>
   );
@@ -40,6 +45,8 @@ function SearchInput() {
 
 export function Header() {
   const { openCart, getTotalItems } = useCartStore();
+  const { lang } = useLanguageStore();
+  const t = translations[lang];
   const [mounted, setMounted] = useState(false);
 
   React.useEffect(() => {
@@ -58,28 +65,31 @@ export function Header() {
           </div>
           <div className="flex flex-col">
             <span className="font-extrabold text-lg tracking-tight text-zinc-900 dark:text-zinc-50 leading-none">
-              NOVA<span className="text-emerald-500">.</span>
+              Ares<span className="text-emerald-500">Store</span>
             </span>
             <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-400 dark:text-zinc-500">
-              Store
+              {mounted && lang === "ar" ? "متجر الجزائر" : "Algérie • 58 Wilayas"}
             </span>
           </div>
         </Link>
 
-        {/* Search bar wrapped in Suspense for Next.js prerendering */}
+        {/* Search bar wrapped in Suspense */}
         <Suspense fallback={<div className="hidden md:flex flex-1 max-w-md h-10" />}>
           <SearchInput />
         </Suspense>
 
         {/* Actions & Navigation */}
         <div className="flex items-center gap-2">
+          {/* Language Toggle (FR / AR) */}
+          <LanguageToggle />
+
           {/* Admin link */}
           <Link
             href="/admin"
             className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           >
             <ShieldCheck className="w-4 h-4 text-emerald-500" />
-            <span>Admin</span>
+            <span>{mounted ? t.adminPortal : "Admin"}</span>
           </Link>
 
           <ThemeToggle />
@@ -91,7 +101,7 @@ export function Header() {
             className="relative flex items-center justify-center h-10 px-3.5 gap-2 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-semibold text-xs hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all duration-200 shadow-sm active:scale-95"
           >
             <ShoppingBag className="w-4 h-4" />
-            <span className="hidden sm:inline">Panier</span>
+            <span className="hidden sm:inline">{mounted ? t.cart : "Panier"}</span>
             {mounted && totalItems > 0 && (
               <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[11px] font-extrabold rounded-full bg-emerald-500 text-white shadow-sm animate-in zoom-in duration-200">
                 {totalItems}

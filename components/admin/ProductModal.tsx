@@ -172,7 +172,7 @@ export function ProductModal({
         <Input
           id="name"
           label="Nom du produit *"
-          placeholder="ex: Casque Audio Nova Pro"
+          placeholder=""
           value={formData.name || ""}
           error={errors.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -183,8 +183,8 @@ export function ProductModal({
             id="price"
             type="number"
             step="0.01"
-            label="Prix (€) *"
-            placeholder="129.99"
+            label="Prix (DZD) *"
+            placeholder=""
             value={formData.price !== undefined ? formData.price : ""}
             error={errors.price}
             onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
@@ -211,7 +211,7 @@ export function ProductModal({
             id="stock"
             type="number"
             label="Stock disponible *"
-            placeholder="10"
+            placeholder=""
             value={formData.stock !== undefined ? formData.stock : ""}
             error={errors.stock}
             onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value, 10) || 0 })}
@@ -225,7 +225,7 @@ export function ProductModal({
           <textarea
             rows={3}
             value={formData.description || ""}
-            placeholder="Caractéristiques techniques, dimensions, garantie..."
+            placeholder=""
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             className="w-full rounded-xl border border-zinc-200 bg-white/70 dark:bg-zinc-900/70 p-3 text-xs focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 dark:border-zinc-800 text-foreground"
           />
@@ -281,7 +281,7 @@ export function ProductModal({
               </label>
 
               <Input
-                placeholder="Ou collez une URL d'image directe (https://...)"
+                placeholder=""
                 value={formData.image_url || ""}
                 onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
                 error={errors.image_url}

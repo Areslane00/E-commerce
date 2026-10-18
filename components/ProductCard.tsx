@@ -1,12 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag, Eye, Check } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { Product } from "@/types";
 import { formatPrice, cn } from "@/lib/utils";
 import { useCartStore } from "@/store/useCartStore";
+import { useLanguageStore } from "@/store/useLanguageStore";
+import { translations } from "@/lib/translations";
 import { useToast } from "@/components/ui/Toast";
 
 interface ProductCardProps {
@@ -14,7 +16,15 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const { addItem, openCart } = useCartStore();
+  const { addItem } = useCartStore();
+  const { lang } = useLanguageStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isAr = mounted && lang === "ar";
   const { success, error } = useToast();
   const isOutOfStock = product.stock <= 0;
 
@@ -26,9 +36,12 @@ export function ProductCard({ product }: ProductCardProps) {
 
     const result = addItem(product, 1);
     if (result.success) {
-      success(`"${product.name}" a été ajouté au panier.`, "Ajouté !");
+      success(
+        isAr ? `تمت إضافة "${product.name}" إلى السلة` : `"${product.name}" a été ajouté au panier.`,
+        isAr ? "أُضيف بنجاح" : "Ajouté !"
+      );
     } else {
-      error(result.message, "Attention");
+      error(result.message, isAr ? "تنبيه" : "Attention");
     }
   };
 
@@ -59,31 +72,31 @@ export function ProductCard({ product }: ProductCardProps) {
         )}
 
         {/* Stock Status Badge */}
-        <div className="absolute top-3 left-3 z-10">
+        <div className="absolute top-3 left-3 rtl:left-auto rtl:right-3 z-10">
           {isOutOfStock ? (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase bg-rose-600 text-white shadow-md">
               <span className="w-1.5 h-1.5 rounded-full bg-white" />
-              Terminé
+              {isAr ? "نفذت الكمية" : "Terminé"}
             </span>
           ) : (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase bg-emerald-600 text-white shadow-md">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-200 animate-pulse" />
-              Disponible
+              {isAr ? "متوفر" : "Disponible"}
             </span>
           )}
         </div>
 
         {/* Low Stock Warning Badge (if stock > 0 and stock < 5) */}
         {!isOutOfStock && product.stock < 5 && (
-          <div className="absolute top-3 right-3 z-10">
+          <div className="absolute top-3 right-3 rtl:right-auto rtl:left-3 z-10">
             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase bg-amber-500/90 text-white shadow-sm backdrop-blur-sm">
-              Plus que {product.stock}
+              {isAr ? `متبقي ${product.stock}` : `Plus que ${product.stock}`}
             </span>
           </div>
         )}
 
         {/* Category Pill */}
-        <div className="absolute bottom-3 left-3 z-10">
+        <div className="absolute bottom-3 left-3 rtl:left-auto rtl:right-3 z-10">
           <span className="px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-black/60 text-white backdrop-blur-md uppercase tracking-wider">
             {product.category}
           </span>
@@ -99,7 +112,7 @@ export function ProductCard({ product }: ProductCardProps) {
             </h3>
           </Link>
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 leading-relaxed">
-            {product.description || "Aucune description fournie."}
+            {product.description || (isAr ? "منتج ذو جودة عالية متوفر للطلب الآن." : "Aucune description fournie.")}
           </p>
         </div>
 
@@ -107,9 +120,9 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-2">
           <div className="flex flex-col">
             <span className="text-[10px] uppercase font-bold text-zinc-400 dark:text-zinc-500">
-              Prix
+              {isAr ? "السعر" : "Prix"}
             </span>
-            <span className="text-base sm:text-lg font-extrabold text-zinc-900 dark:text-zinc-50">
+            <span className="text-base sm:text-lg font-extrabold text-zinc-900 dark:text-zinc-50 whitespace-nowrap">
               {formatPrice(product.price)}
             </span>
           </div>
@@ -123,10 +136,12 @@ export function ProductCard({ product }: ProductCardProps) {
                 ? "bg-zinc-200 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-600 cursor-not-allowed"
                 : "bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
             )}
-            title={isOutOfStock ? "Ce produit est épuisé" : "Ajouter au panier"}
+            title={isOutOfStock ? (isAr ? "نفذت الكمية" : "Ce produit est épuisé") : (isAr ? "أضف إلى السلة" : "Ajouter au panier")}
           >
             <ShoppingBag className="w-3.5 h-3.5" />
-            <span>{isOutOfStock ? "Épuisé" : "Ajouter"}</span>
+            <span>
+              {isOutOfStock ? (isAr ? "نفذ" : "Épuisé") : (isAr ? "أضف للسلة" : "Ajouter")}
+            </span>
           </button>
         </div>
       </div>

@@ -142,7 +142,7 @@ export function AnalyticsCharts({
               <YAxis
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(val) => `${val}€`}
+                tickFormatter={(val) => `${val} DZD`}
                 tick={{ fontSize: 11, fill: "#888888" }}
               />
               <Tooltip

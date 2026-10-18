@@ -91,7 +91,7 @@ export function OrdersTable({ initialOrders }: OrdersTableProps) {
             type="search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Rechercher par n° commande, nom du client, tél..."
+            placeholder=""
             className="w-full h-10 pl-9 pr-4 rounded-xl text-xs bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 text-foreground transition-all"
           />
         </div>

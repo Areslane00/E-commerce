@@ -106,7 +106,7 @@ function LoginForm() {
           id="email"
           type="email"
           label="Email Administrateur"
-          placeholder="admin@votredomaine.com"
+          placeholder=""
           error={errors.email?.message}
           {...register("email")}
         />
@@ -115,7 +115,7 @@ function LoginForm() {
           id="password"
           type="password"
           label="Mot de passe"
-          placeholder="••••••••"
+          placeholder=""
           error={errors.password?.message}
           {...register("password")}
         />

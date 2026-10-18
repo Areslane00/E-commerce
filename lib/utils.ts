@@ -6,14 +6,16 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * Formatage des montants en Dinars Algériens (DZD / د.ج)
+ */
 export function formatPrice(amount: number | string | null | undefined): string {
   const num = typeof amount === "string" ? parseFloat(amount) : Number(amount) || 0;
-  return new Intl.NumberFormat("fr-FR", {
-    style: "currency",
-    currency: "EUR",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(num);
+  const formatted = new Intl.NumberFormat("fr-FR", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(Math.round(num));
+  return `${formatted} DZD`;
 }
 
 export function formatDate(dateString: string | null | undefined): string {

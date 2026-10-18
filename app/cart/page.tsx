@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useCartStore } from "@/store/useCartStore";
+import { useLanguageStore } from "@/store/useLanguageStore";
+import { translations } from "@/lib/translations";
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, ShieldCheck, ArrowLeft } from "lucide-react";
@@ -20,6 +22,16 @@ export default function CartPage() {
     getTotalItems,
   } = useCartStore();
 
+  const { lang } = useLanguageStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isAr = mounted && lang === "ar";
+  const t = translations[mounted ? lang : "fr"];
+
   const totalPrice = getTotalPrice();
   const totalItems = getTotalItems();
 
@@ -31,10 +43,10 @@ export default function CartPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-50 tracking-tight">
-              Votre Panier
+              {t.cartTitle}
             </h1>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-              {totalItems} article{totalItems > 1 ? "s" : ""} sélectionné{totalItems > 1 ? "s" : ""}
+              {totalItems} {isAr ? "منتج مختار" : `article${totalItems > 1 ? "s" : ""} sélectionné${totalItems > 1 ? "s" : ""}`}
             </p>
           </div>
 
@@ -43,7 +55,7 @@ export default function CartPage() {
               onClick={clearCart}
               className="text-xs text-rose-600 hover:text-rose-700 font-medium transition-colors"
             >
-              Vider le panier
+              {isAr ? "تفريغ السلة" : "Vider le panier"}
             </button>
           )}
         </div>
@@ -54,15 +66,15 @@ export default function CartPage() {
               <ShoppingBag className="w-10 h-10 stroke-[1.5]" />
             </div>
             <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-1">
-              Votre panier est actuellement vide
+              {t.cartEmpty}
             </h3>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm mb-6">
-              Vous n&apos;avez encore ajouté aucun article. Parcourez notre catalogue pour découvrir nos offres exclusives.
+              {t.cartEmptySubtitle}
             </p>
             <Link href="/">
               <Button className="gap-2">
-                <ArrowLeft className="w-4 h-4" />
-                Découvrir le catalogue
+                <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
+                <span>{t.continueShopping}</span>
               </Button>
             </Link>
           </div>
@@ -103,7 +115,7 @@ export default function CartPage() {
                         <button
                           onClick={() => removeItem(product.id)}
                           className="text-zinc-400 hover:text-rose-500 transition-colors p-1"
-                          title="Supprimer du panier"
+                          title={isAr ? "حذف" : "Supprimer du panier"}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -134,11 +146,11 @@ export default function CartPage() {
                         </button>
                       </div>
 
-                      <div className="text-right">
+                      <div className="text-right rtl:text-left">
                         <span className="block text-xs text-zinc-400">
                           {formatPrice(product.price)} x {quantity}
                         </span>
-                        <span className="text-base sm:text-lg font-extrabold text-zinc-900 dark:text-zinc-50">
+                        <span className="text-base sm:text-lg font-extrabold text-zinc-900 dark:text-zinc-50 whitespace-nowrap">
                           {formatPrice(product.price * quantity)}
                         </span>
                       </div>
@@ -151,27 +163,27 @@ export default function CartPage() {
             {/* Order Summary Card */}
             <div className="rounded-3xl p-6 bg-zinc-50/80 dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800/80 space-y-6">
               <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50">
-                Récapitulatif de la commande
+                {isAr ? "ملخص الطلبية" : "Récapitulatif de la commande"}
               </h3>
 
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
-                  <span>Sous-total articles</span>
+                  <span>{t.subtotal}</span>
                   <span className="font-semibold text-zinc-900 dark:text-zinc-200">
                     {formatPrice(totalPrice)}
                   </span>
                 </div>
                 <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
-                  <span>Frais de livraison</span>
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-                    Gratuit (Paiement à la livraison)
+                  <span>{t.delivery} (58 Wilayas)</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                    {t.free}
                   </span>
                 </div>
                 <div className="pt-3 border-t border-zinc-200 dark:border-zinc-800 flex justify-between items-baseline">
                   <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                    Montant total à payer
+                    {t.totalToPay}
                   </span>
-                  <span className="text-2xl font-black text-zinc-900 dark:text-zinc-50">
+                  <span className="text-2xl font-black text-zinc-900 dark:text-zinc-50 whitespace-nowrap">
                     {formatPrice(totalPrice)}
                   </span>
                 </div>
@@ -180,14 +192,16 @@ export default function CartPage() {
               <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-3 text-xs text-emerald-800 dark:text-emerald-300">
                 <ShieldCheck className="w-5 h-5 flex-shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" />
                 <p className="leading-relaxed">
-                  Paiement sécurisé en espèces lors de la livraison de votre colis à votre porte.
+                  {isAr
+                    ? "الدفع نقداً بالدينار الجزائري مباشرة للموزع عند استلام طردك وفحصه."
+                    : "Paiement en espèces lors de la livraison de votre colis partout en Algérie."}
                 </p>
               </div>
 
               <Link href="/checkout" className="block w-full">
                 <Button size="lg" className="w-full gap-2 font-bold shadow-lg shadow-zinc-900/10">
-                  Passer la commande
-                  <ArrowRight className="w-4 h-4" />
+                  <span>{t.checkoutButton}</span>
+                  <ArrowRight className="w-4 h-4 rtl:rotate-180" />
                 </Button>
               </Link>
             </div>
