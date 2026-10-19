@@ -14,10 +14,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Valider le type mime de l'image
-    if (!file.type.startsWith("image/")) {
+    const isImage = file.type.startsWith("image/");
+    const isVideo = file.type.startsWith("video/");
+
+    if (!isImage && !isVideo) {
       return NextResponse.json(
-        { success: false, error: "Le fichier doit être une image valide." },
+        { success: false, error: "Le fichier doit être une image ou une vidéo valide (MP4, WebM, MOV, etc.)." },
         { status: 400 }
       );
     }
@@ -32,8 +34,9 @@ export async function POST(request: NextRequest) {
     // Utiliser le client admin pour l'upload dans le bucket product-images
     const adminSupabase = createAdminClient();
 
-    const fileExt = file.name.split(".").pop();
-    const cleanFileName = `prod-${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+    const fileExt = file.name.split(".").pop() || (isVideo ? "mp4" : "jpg");
+    const prefix = isVideo ? "vid" : "prod";
+    const cleanFileName = `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);

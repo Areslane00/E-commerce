@@ -76,6 +76,10 @@ export const productSchema = z.object({
     .array(z.string().url("URL de photo invalide"))
     .optional()
     .default([]),
+  videos: z
+    .array(z.string())
+    .optional()
+    .default([]),
 });
 
 export type ProductFormValues = z.infer<typeof productSchema>;

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag, Zap, Layers } from "lucide-react";
+import { ShoppingBag, Zap, Layers, Video as VideoIcon } from "lucide-react";
 import { Product } from "@/types";
 import { formatPrice, cn } from "@/lib/utils";
 import { useCartStore } from "@/store/useCartStore";
@@ -118,15 +118,22 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
 
-          {/* Badge Multi-Photos si le produit a plusieurs images */}
-          {validImages.length > 1 && (
-            <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 rtl:right-auto rtl:left-2 rtl:sm:left-3 z-10">
+          {/* Badge Multi-Photos & Vidéos */}
+          <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 rtl:right-auto rtl:left-2 rtl:sm:left-3 z-10 flex items-center gap-1.5">
+            {product.videos && product.videos.length > 0 && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold bg-emerald-600 text-white shadow-sm">
+                <VideoIcon className="w-3 h-3" />
+                <span>{product.videos.length > 1 ? `${product.videos.length} vidéos` : "Vidéo"}</span>
+              </span>
+            )}
+
+            {validImages.length > 1 && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold bg-black/60 text-white backdrop-blur-md shadow-sm">
                 <Layers className="w-3 h-3" />
                 <span>{validImages.length} photos</span>
               </span>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Stock Status Badge */}
           <div className="absolute top-2 left-2 sm:top-3 sm:left-3 rtl:left-auto rtl:right-2 rtl:sm:right-3 z-10">

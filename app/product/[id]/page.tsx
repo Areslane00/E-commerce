@@ -74,6 +74,7 @@ export default async function ProductDetailPage({
                   ? [product.image_url]
                   : []
               }
+              videos={product.videos || []}
               productName={product.name}
               hasPromo={hasPromo}
               discountPercent={discountPercent}

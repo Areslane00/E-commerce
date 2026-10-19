@@ -141,6 +141,40 @@ export function parseProduct(p: any): Product {
     }
   }
 
+  // Extraction des vidéos
+  let videos: string[] = [];
+
+  if (Array.isArray(p.videos) && p.videos.length > 0) {
+    videos = p.videos.filter((vid: any) => typeof vid === "string" && vid.trim().length > 0);
+  } else if (typeof p.videos === "string" && p.videos.trim()) {
+    try {
+      const parsed = JSON.parse(p.videos);
+      if (Array.isArray(parsed)) {
+        videos = parsed.filter((vid: any) => typeof vid === "string" && vid.trim().length > 0);
+      }
+    } catch {
+      // Ignorer si pas du JSON
+    }
+  }
+
+  // Fallback si tag transparent <!--VIDEOS:[...]--> dans description
+  if (description.includes("<!--VIDEOS:")) {
+    const vidMatch = description.match(/<!--VIDEOS:(.+?)-->/);
+    if (vidMatch && vidMatch[1]) {
+      if (videos.length === 0) {
+        try {
+          const parsed = JSON.parse(vidMatch[1]);
+          if (Array.isArray(parsed)) {
+            videos = parsed.filter((vid: any) => typeof vid === "string" && vid.trim().length > 0);
+          }
+        } catch {
+          // Ignorer
+        }
+      }
+      description = description.replace(/<!--VIDEOS:.+?-->\s*/, "").trim();
+    }
+  }
+
   // Si toujours vide mais qu'une image_url existe, l'ajouter comme unique photo
   if (images.length === 0 && p.image_url) {
     images = [p.image_url];
@@ -154,6 +188,7 @@ export function parseProduct(p: any): Product {
     description,
     image_url,
     images,
+    videos,
     original_price: original_price && original_price > 0 ? original_price : null,
   };
 }

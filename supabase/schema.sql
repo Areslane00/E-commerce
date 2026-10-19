@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS public.products (
   category TEXT NOT NULL,
   image_url TEXT,
   images TEXT[] DEFAULT '{}', -- Liste de photos pour l'article
+  videos TEXT[] DEFAULT '{}', -- Liste de vidéos pour l'article
   stock INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
   created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
@@ -64,6 +65,7 @@ CREATE TABLE IF NOT EXISTS public.products (
 -- Si la table existe déjà, exécutez ces commandes pour mettre à jour la structure :
 ALTER TABLE public.products ADD COLUMN IF NOT EXISTS original_price NUMERIC(10, 2);
 ALTER TABLE public.products ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT '{}';
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS videos TEXT[] DEFAULT '{}';
 
 -- 4. TABLE ORDERS
 CREATE TABLE IF NOT EXISTS public.orders (

@@ -19,6 +19,7 @@ import {
   Plus,
   Trash2,
   Layers,
+  Video as VideoIcon,
 } from "lucide-react";
 
 interface ProductModalProps {
@@ -39,7 +40,7 @@ export function ProductModal({
   const isEditing = Boolean(product);
   const { success, error: toastError } = useToast();
 
-  const [formData, setFormData] = useState<Partial<ProductFormValues> & { images?: string[] }>({
+  const [formData, setFormData] = useState<Partial<ProductFormValues> & { images?: string[]; videos?: string[] }>({
     name: "",
     description: "",
     price: 0,
@@ -48,12 +49,19 @@ export function ProductModal({
     stock: 10,
     image_url: "",
     images: [],
+    videos: [],
   });
 
   const [urlInput, setUrlInput] = useState("");
+  const [videoUrlInput, setVideoUrlInput] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState("");
+
+  const [isUploadingVideo, setIsUploadingVideo] = useState(false);
+  const [videoUploadProgress, setVideoUploadProgress] = useState("");
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -66,6 +74,8 @@ export function ProductModal({
         : []
       ).filter(Boolean);
 
+      const initialVideos = (parsed.videos || []).filter(Boolean);
+
       setFormData({
         name: parsed.name,
         description: parsed.description || "",
@@ -75,6 +85,7 @@ export function ProductModal({
         stock: parsed.stock,
         image_url: initialImages[0] || "",
         images: initialImages,
+        videos: initialVideos,
       });
     } else {
       setFormData({
@@ -86,9 +97,11 @@ export function ProductModal({
         stock: 10,
         image_url: "",
         images: [],
+        videos: [],
       });
     }
     setUrlInput("");
+    setVideoUrlInput("");
     setErrors({});
   }, [product, isOpen]);
 
@@ -146,6 +159,59 @@ export function ProductModal({
     }
   };
 
+  // Upload d'une ou plusieurs vidéos vers Supabase Storage
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    if (files.length === 0) return;
+
+    setIsUploadingVideo(true);
+    setVideoUploadProgress(`Téléversement vidéo 0/${files.length}...`);
+
+    const uploadedUrls: string[] = [];
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        setVideoUploadProgress(`Téléversement de ${i + 1}/${files.length} (${file.name})...`);
+
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", file);
+
+        const res = await fetch("/api/admin/upload", {
+          method: "POST",
+          body: uploadFormData,
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || `Échec pour "${file.name}"`);
+        }
+
+        uploadedUrls.push(data.url);
+      }
+
+      setFormData((prev) => {
+        const currentVideos = prev.videos || [];
+        const newVideos = [...currentVideos, ...uploadedUrls];
+        return {
+          ...prev,
+          videos: newVideos,
+        };
+      });
+
+      success(
+        `${uploadedUrls.length} vidéo${uploadedUrls.length > 1 ? "s" : ""} ajoutée${uploadedUrls.length > 1 ? "s" : ""} avec succès !`,
+        "Vidéos téléversées"
+      );
+    } catch (err: any) {
+      toastError(err.message || "Erreur lors du téléversement vidéo.", "Erreur Storage");
+    } finally {
+      setIsUploadingVideo(false);
+      setVideoUploadProgress("");
+      e.target.value = "";
+    }
+  };
+
   // Ajouter une photo via son URL
   const handleAddUrl = () => {
     const url = urlInput.trim();
@@ -170,6 +236,29 @@ export function ProductModal({
     success("Photo ajoutée via URL avec succès.", "Photo ajoutée");
   };
 
+  // Ajouter une vidéo via son URL
+  const handleAddVideoUrl = () => {
+    const url = videoUrlInput.trim();
+    if (!url) return;
+
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      toastError("Veuillez saisir une URL de vidéo valide commençant par http:// ou https://", "URL invalide");
+      return;
+    }
+
+    setFormData((prev) => {
+      const currentVideos = prev.videos || [];
+      const newVideos = [...currentVideos, url];
+      return {
+        ...prev,
+        videos: newVideos,
+      };
+    });
+
+    setVideoUrlInput("");
+    success("Vidéo ajoutée via URL avec succès.", "Vidéo ajoutée");
+  };
+
   // Supprimer une photo de la liste
   const handleRemoveImage = (indexToRemove: number) => {
     setFormData((prev) => {
@@ -178,6 +267,17 @@ export function ProductModal({
         ...prev,
         images: newImages,
         image_url: newImages[0] || "",
+      };
+    });
+  };
+
+  // Supprimer une vidéo de la liste
+  const handleRemoveVideo = (indexToRemove: number) => {
+    setFormData((prev) => {
+      const newVideos = (prev.videos || []).filter((_, idx) => idx !== indexToRemove);
+      return {
+        ...prev,
+        videos: newVideos,
       };
     });
   };
@@ -203,12 +303,14 @@ export function ProductModal({
     setErrors({});
 
     const imagesList = (formData.images || []).filter(Boolean);
+    const videosList = (formData.videos || []).filter(Boolean);
     const primaryImageUrl = imagesList[0] || formData.image_url || "";
 
     const dataToValidate = {
       ...formData,
       image_url: primaryImageUrl || undefined,
       images: imagesList,
+      videos: videosList,
     };
 
     const validated = productSchema.safeParse(dataToValidate);
@@ -228,6 +330,7 @@ export function ProductModal({
       const cleanDesc = (validated.data.description || "")
         .replace(/<!--PROMO:[0-9.]+-->\s*/, "")
         .replace(/<!--IMAGES:.+?-->\s*/, "")
+        .replace(/<!--VIDEOS:.+?-->\s*/, "")
         .trim();
 
       const promoTag =
@@ -240,7 +343,12 @@ export function ProductModal({
           ? `<!--IMAGES:${JSON.stringify(imagesList)}-->\n`
           : "";
 
-      const finalDescription = `${promoTag}${imagesTag}${cleanDesc}`.trim();
+      const videosTag =
+        videosList.length > 0
+          ? `<!--VIDEOS:${JSON.stringify(videosList)}-->\n`
+          : "";
+
+      const finalDescription = `${promoTag}${imagesTag}${videosTag}${cleanDesc}`.trim();
 
       const payload: any = {
         name: validated.data.name,
@@ -250,6 +358,7 @@ export function ProductModal({
         stock: validated.data.stock,
         image_url: primaryImageUrl || null,
         images: imagesList,
+        videos: videosList,
       };
 
       if (validated.data.original_price && Number(validated.data.original_price) > 0) {
@@ -279,11 +388,19 @@ export function ProductModal({
 
       let res = await executeSave(payload);
 
-      // Si erreur de colonne manquante en BDD Supabase (images ou original_price)
-      if (res.error && (res.error.message.includes("images") || res.error.message.includes("original_price"))) {
+      // Si erreur de colonne manquante en BDD Supabase (images, videos ou original_price)
+      if (
+        res.error &&
+        (res.error.message.includes("images") ||
+          res.error.message.includes("videos") ||
+          res.error.message.includes("original_price"))
+      ) {
         const fallbackPayload = { ...payload };
         if (res.error.message.includes("images")) {
           delete fallbackPayload.images;
+        }
+        if (res.error.message.includes("videos")) {
+          delete fallbackPayload.videos;
         }
         if (res.error.message.includes("original_price")) {
           delete fallbackPayload.original_price;
@@ -297,8 +414,9 @@ export function ProductModal({
 
       savedProduct = parseProduct(res.data);
       if (savedProduct) {
-        // Garantir que les photos locales fraîchement configurées sont conservées dans le state
+        // Garantir que les photos et vidéos locales sont conservées dans le state
         savedProduct.images = imagesList;
+        savedProduct.videos = videosList;
         savedProduct.image_url = primaryImageUrl || null;
       }
 
@@ -320,13 +438,14 @@ export function ProductModal({
   };
 
   const images = formData.images || [];
+  const videos = formData.videos || [];
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       title={isEditing ? "Modifier l'article" : "Ajouter un nouvel article"}
-      description="Remplissez les détails ci-dessous. Vous pouvez ajouter une ou plusieurs photos pour chaque article."
+      description="Remplissez les détails ci-dessous. Vous pouvez ajouter des photos et des vidéos pour chaque article."
       maxWidth="2xl"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -415,7 +534,7 @@ export function ProductModal({
           />
         </div>
 
-        {/* Section Photos Multiples */}
+        {/* Section 1 : Photos Multiples */}
         <div className="p-4 rounded-2xl bg-zinc-50/80 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-750 space-y-3.5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
@@ -430,7 +549,7 @@ export function ProductModal({
               </p>
             </div>
 
-            {/* Bouton d'upload multiple */}
+            {/* Bouton d'upload multiple photos */}
             <label className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl border border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold transition-all cursor-pointer shadow-sm">
               {isUploading ? (
                 <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
@@ -466,16 +585,15 @@ export function ProductModal({
               className="gap-1.5 whitespace-nowrap h-11 px-3.5 font-semibold text-xs"
             >
               <Plus className="w-4 h-4" />
-              <span>Ajouter</span>
+              <span>Ajouter photo</span>
             </Button>
           </div>
 
           {/* Grille de prévisualisation des photos */}
           {images.length === 0 ? (
-            <div className="py-6 border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-xl flex flex-col items-center justify-center text-center text-zinc-400 dark:text-zinc-500">
-              <ImageIcon className="w-8 h-8 mb-1 stroke-[1.5]" />
+            <div className="py-5 border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-xl flex flex-col items-center justify-center text-center text-zinc-400 dark:text-zinc-500">
+              <ImageIcon className="w-7 h-7 mb-1 stroke-[1.5]" />
               <p className="text-xs font-medium">Aucune photo ajoutée pour cet article</p>
-              <p className="text-[10px] text-zinc-400">Téléversez des fichiers ou renseignez une URL ci-dessus</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3 pt-1">
@@ -535,6 +653,103 @@ export function ProductModal({
                   </div>
                 );
               })}
+            </div>
+          )}
+        </div>
+
+        {/* Section 2 : Vidéos de l'article */}
+        <div className="p-4 rounded-2xl bg-zinc-50/80 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-750 space-y-3.5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <div className="flex items-center gap-2">
+                <VideoIcon className="w-4 h-4 text-emerald-500" />
+                <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+                  Vidéos de l'article ({videos.length} vidéo{videos.length > 1 ? "s" : ""})
+                </h4>
+              </div>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">
+                Téléversez une ou plusieurs vidéos de présentation du produit (MP4, WebM, etc.).
+              </p>
+            </div>
+
+            {/* Bouton d'upload multiple vidéos */}
+            <label className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl border border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold transition-all cursor-pointer shadow-sm">
+              {isUploadingVideo ? (
+                <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
+              ) : (
+                <UploadCloud className="w-4 h-4 text-emerald-600" />
+              )}
+              <span>{isUploadingVideo ? (videoUploadProgress || "Téléversement vidéo...") : "Téléverser des vidéos"}</span>
+              <input
+                type="file"
+                multiple
+                accept="video/*,video/mp4,video/webm"
+                onChange={handleVideoUpload}
+                disabled={isUploadingVideo}
+                className="hidden"
+              />
+            </label>
+          </div>
+
+          {/* Formulaire d'ajout rapide par URL vidéo */}
+          <div className="flex gap-2">
+            <Input
+              id="videoUrlInput"
+              placeholder="Ou collez l'URL directe d'une vidéo (https://...mp4)"
+              value={videoUrlInput}
+              onChange={(e) => setVideoUrlInput(e.target.value)}
+              className="text-xs"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleAddVideoUrl}
+              className="gap-1.5 whitespace-nowrap h-11 px-3.5 font-semibold text-xs"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Ajouter vidéo</span>
+            </Button>
+          </div>
+
+          {/* Grille de prévisualisation des vidéos */}
+          {videos.length === 0 ? (
+            <div className="py-5 border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-xl flex flex-col items-center justify-center text-center text-zinc-400 dark:text-zinc-500">
+              <VideoIcon className="w-7 h-7 mb-1 stroke-[1.5]" />
+              <p className="text-xs font-medium">Aucune vidéo ajoutée pour cet article</p>
+              <p className="text-[10px] text-zinc-400">Téléversez un fichier vidéo ou collez un lien direct ci-dessus</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pt-1">
+              {videos.map((vidUrl, index) => (
+                <div
+                  key={`${vidUrl}-${index}`}
+                  className="relative rounded-xl overflow-hidden bg-zinc-900 border border-zinc-200 dark:border-zinc-700 p-2 flex flex-col justify-between"
+                >
+                  <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-black flex items-center justify-center">
+                    <video
+                      src={vidUrl}
+                      controls
+                      playsInline
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between pt-2 px-1">
+                    <span className="text-[11px] font-bold text-zinc-200 flex items-center gap-1.5">
+                      <VideoIcon className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Vidéo #{index + 1}</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveVideo(index)}
+                      className="p-1 rounded-md bg-rose-600/80 hover:bg-rose-600 text-white transition-colors"
+                      title="Supprimer cette vidéo"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>

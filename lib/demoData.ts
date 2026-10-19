@@ -14,6 +14,9 @@ export const DEMO_PRODUCTS: Product[] = [
       "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=800&q=80",
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&q=80",
     ],
+    videos: [
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    ],
     stock: 8,
     created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
   },
@@ -45,6 +48,9 @@ export const DEMO_PRODUCTS: Product[] = [
       "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80",
       "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800&q=80",
       "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&q=80",
+    ],
+    videos: [
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
     ],
     stock: 14,
     created_at: new Date(Date.now() - 86400000 * 3).toISOString(),

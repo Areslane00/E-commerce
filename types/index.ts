@@ -9,6 +9,7 @@ export interface Product {
   category: string;
   image_url: string | null;
   images?: string[]; // Liste de plusieurs photos pour l'article
+  videos?: string[]; // Liste de vidéos pour l'article (fichiers ou URLs)
   stock: number;
   created_at?: string;
   updated_at?: string;

@@ -20,6 +20,7 @@ import {
   AlertTriangle,
   CheckCircle2,
   XCircle,
+  Video as VideoIcon,
 } from "lucide-react";
 
 interface ProductsManagerProps {
@@ -227,11 +228,17 @@ export function ProductsManager({ initialProducts }: ProductsManagerProps) {
                             )}
                           </div>
                           <div className="min-w-0 max-w-xs">
-                            <div className="font-bold text-zinc-900 dark:text-zinc-100 truncate flex items-center gap-1.5">
+                            <div className="font-bold text-zinc-900 dark:text-zinc-100 truncate flex items-center gap-1.5 flex-wrap">
                               <span>{product.name}</span>
                               {product.images && product.images.length > 1 && (
                                 <span className="inline-block text-[10px] text-zinc-400 font-normal">
                                   ({product.images.length} photos)
+                                </span>
+                              )}
+                              {product.videos && product.videos.length > 0 && (
+                                <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/20 px-1.5 py-0.2 rounded-md">
+                                  <VideoIcon className="w-2.5 h-2.5" />
+                                  <span>{product.videos.length} vid</span>
                                 </span>
                               )}
                             </div>
