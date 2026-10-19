@@ -8,6 +8,7 @@ export interface Product {
   original_price?: number | null; // Prix avant promotion (barré)
   category: string;
   image_url: string | null;
+  images?: string[]; // Liste de plusieurs photos pour l'article
   stock: number;
   created_at?: string;
   updated_at?: string;

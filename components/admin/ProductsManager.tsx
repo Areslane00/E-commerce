@@ -220,10 +220,20 @@ export function ProductsManager({ initialProducts }: ProductsManagerProps) {
                                 <ShoppingBag className="w-4 h-4" />
                               </div>
                             )}
+                            {product.images && product.images.length > 1 && (
+                              <div className="absolute bottom-0 right-0 bg-emerald-600 text-white text-[8px] font-bold px-1 rounded-tl shadow-sm">
+                                {product.images.length}
+                              </div>
+                            )}
                           </div>
                           <div className="min-w-0 max-w-xs">
-                            <div className="font-bold text-zinc-900 dark:text-zinc-100 truncate">
-                              {product.name}
+                            <div className="font-bold text-zinc-900 dark:text-zinc-100 truncate flex items-center gap-1.5">
+                              <span>{product.name}</span>
+                              {product.images && product.images.length > 1 && (
+                                <span className="inline-block text-[10px] text-zinc-400 font-normal">
+                                  ({product.images.length} photos)
+                                </span>
+                              )}
                             </div>
                             <div className="text-[11px] text-zinc-400 line-clamp-1">
                               {product.description || "Pas de description"}

@@ -88,6 +88,7 @@ export function getStatusColor(status: OrderStatus): {
 
 /**
  * Normalise un produit en extrayant son original_price (colonne native ou fallback tag)
+ * et ses multiples images (colonne native images[], JSON ou fallback tag <!--IMAGES:[...]-->)
  */
 export function parseProduct(p: any): Product {
   if (!p) return p;
@@ -106,9 +107,53 @@ export function parseProduct(p: any): Product {
     }
   }
 
+  // Extraction des multiples photos
+  let images: string[] = [];
+
+  if (Array.isArray(p.images) && p.images.length > 0) {
+    images = p.images.filter((img: any) => typeof img === "string" && img.trim().length > 0);
+  } else if (typeof p.images === "string" && p.images.trim()) {
+    try {
+      const parsed = JSON.parse(p.images);
+      if (Array.isArray(parsed)) {
+        images = parsed.filter((img: any) => typeof img === "string" && img.trim().length > 0);
+      }
+    } catch {
+      // Ignorer si pas du JSON
+    }
+  }
+
+  // Fallback si tag transparent <!--IMAGES:[...]--> dans description
+  if (description.includes("<!--IMAGES:")) {
+    const imgMatch = description.match(/<!--IMAGES:(.+?)-->/);
+    if (imgMatch && imgMatch[1]) {
+      if (images.length === 0) {
+        try {
+          const parsed = JSON.parse(imgMatch[1]);
+          if (Array.isArray(parsed)) {
+            images = parsed.filter((img: any) => typeof img === "string" && img.trim().length > 0);
+          }
+        } catch {
+          // Ignorer
+        }
+      }
+      description = description.replace(/<!--IMAGES:.+?-->\s*/, "").trim();
+    }
+  }
+
+  // Si toujours vide mais qu'une image_url existe, l'ajouter comme unique photo
+  if (images.length === 0 && p.image_url) {
+    images = [p.image_url];
+  }
+
+  // Image principale (la première de la liste, ou image_url)
+  const image_url = images.length > 0 ? images[0] : (p.image_url || null);
+
   return {
     ...p,
     description,
+    image_url,
+    images,
     original_price: original_price && original_price > 0 ? original_price : null,
   };
 }

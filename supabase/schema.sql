@@ -55,13 +55,15 @@ CREATE TABLE IF NOT EXISTS public.products (
   original_price NUMERIC(10, 2) CHECK (original_price >= 0), -- Prix avant promotion (barré)
   category TEXT NOT NULL,
   image_url TEXT,
+  images TEXT[] DEFAULT '{}', -- Liste de photos pour l'article
   stock INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
   created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
 );
 
--- Si la table existe déjà, exécutez cette commande pour ajouter le support des promotions :
+-- Si la table existe déjà, exécutez ces commandes pour mettre à jour la structure :
 ALTER TABLE public.products ADD COLUMN IF NOT EXISTS original_price NUMERIC(10, 2);
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT '{}';
 
 -- 4. TABLE ORDERS
 CREATE TABLE IF NOT EXISTS public.orders (

@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { DEMO_PRODUCTS } from "@/lib/demoData";
 import { Product } from "@/types";
 import { formatPrice, parseProduct } from "@/lib/utils";
+import { ProductImageGallery } from "@/components/ProductImageGallery";
 import { ProductDetailClient } from "./ProductDetailClient";
 import { ArrowLeft, ShieldCheck, Truck, RotateCcw } from "lucide-react";
 
@@ -63,30 +64,20 @@ export default async function ProductDetailPage({
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
-          {/* Large Image Showcase */}
-          <div className="relative aspect-square w-full rounded-3xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-800/80 shadow-lg">
-            {hasPromo && (
-              <div className="absolute top-4 right-4 rtl:right-auto rtl:left-4 z-10">
-                <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black tracking-wide uppercase bg-rose-600 text-white shadow-xl animate-pulse">
-                  <span>(Promotion) / (تخفيض)</span>
-                  {discountPercent > 0 && <span>-{discountPercent}%</span>}
-                </span>
-              </div>
-            )}
-            {product.image_url ? (
-              <Image
-                src={product.image_url}
-                alt={product.name}
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-zinc-400">
-                Aucune image disponible
-              </div>
-            )}
+          {/* Multi-Photo Image Showcase & Thumbnails */}
+          <div className="w-full">
+            <ProductImageGallery
+              images={
+                product.images && product.images.length > 0
+                  ? product.images
+                  : product.image_url
+                  ? [product.image_url]
+                  : []
+              }
+              productName={product.name}
+              hasPromo={hasPromo}
+              discountPercent={discountPercent}
+            />
           </div>
 
           {/* Product Info & Interactive Client Area */}
